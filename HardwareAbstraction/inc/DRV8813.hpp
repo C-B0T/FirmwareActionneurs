@@ -185,6 +185,12 @@ typedef struct
 		Timer* tim;
 		
 		/**
+			 * @private
+			 * @brief pulse number to execute
+			 */
+		uint32_t nb_pulse
+
+		/**
 		 * @private
 		 * @brief Drv8813 GPIO instances
 		 */
