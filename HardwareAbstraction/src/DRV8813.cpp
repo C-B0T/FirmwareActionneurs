@@ -17,7 +17,8 @@ using namespace HAL;
 /*----------------------------------------------------------------------------*/
 #define STEPPER_FREQ_PWM	(1000000u)			//1MHz
 #define DC_FREQ_PWM			(10000u)			//10kHz
-#define TIMER_TICK_REF		7
+#define FREQ_TICK_REF		(4000u)				//4kHz
+#define TIMER_TICK_REF		Timer::TIMER7		//Warning: common to Servo Driver
 
 #define USTEP_1		0
 #define USTEP_2		1
@@ -96,7 +97,6 @@ static DRV8813_DEF _getDrv8813Struct (enum Timer::ID id)
 		drv.DRV8813.MODE				=	STEPPER_MODE;
 		drv.USTEP_MODE					= 	USTEP_1;
 		drv.DRV8813.PWM_FREQ			=	STEPPER_FREQ;
-		drv.DRV8813.STATE				=	DISABLED;
 		drv.DRV8813.GPIO_DECAY			=	GPIO_DECAY;
 		drv.DRV8813.GPIO_RESET			=	GPIO_RESET;
 		drv.DRV8813.GPIO_SLEEP			=	GPIO_SLEEP;
@@ -110,7 +110,6 @@ static DRV8813_DEF _getDrv8813Struct (enum Timer::ID id)
 		drv.DRV8813.MODE				=	STEPPER_MODE;
 		drv.USTEP_MODE					= 	USTEP_1;
 		drv.DRV8813.PWM_FREQ			=	STEPPER_FREQ;
-		drv.DRV8813.STATE				=	DISABLED;
 		drv.DRV8813.GPIO_DECAY			=	GPIO_DECAY;
 		drv.DRV8813.GPIO_RESET			=	GPIO_RESET;
 		drv.DRV8813.GPIO_SLEEP			=	GPIO_SLEEP;
@@ -124,7 +123,6 @@ static DRV8813_DEF _getDrv8813Struct (enum Timer::ID id)
 		drv.DRV8813.MODE				=	STEPPER_MODE;
 		drv.USTEP_MODE					= 	USTEP_1;
 		drv.DRV8813.PWM_FREQ			=	STEPPER_FREQ;
-		drv.DRV8813.STATE				=	DISABLED;
 		drv.DRV8813.GPIO_DECAY			=	GPIO_DECAY;
 		drv.DRV8813.GPIO_RESET			=	GPIO_RESET;
 		drv.DRV8813.GPIO_SLEEP			=	GPIO_SLEEP;
@@ -138,7 +136,6 @@ static DRV8813_DEF _getDrv8813Struct (enum Timer::ID id)
 		drv.DRV8813.MODE				=	STEPPER_MODE;
 		drv.USTEP_MODE					= 	USTEP_1;
 		drv.DRV8813.PWM_FREQ			=	STEPPER_FREQ;
-		drv.DRV8813.STATE				=	DISABLED;
 		drv.DRV8813.GPIO_DECAY			=	GPIO_DECAY;
 		drv.DRV8813.GPIO_RESET			=	GPIO_RESET;
 		drv.DRV8813.GPIO_SLEEP			=	GPIO_SLEEP;
@@ -152,7 +149,6 @@ static DRV8813_DEF _getDrv8813Struct (enum Timer::ID id)
 		drv.DRV8813.MODE				=	STEPPER_MODE;
 		drv.USTEP_MODE					= 	USTEP_1;
 		drv.DRV8813.PWM_FREQ			=	STEPPER_FREQ;
-		drv.DRV8813.STATE				=	DISABLED;
 		drv.DRV8813.GPIO_DECAY			=	GPIO_DECAY;
 		drv.DRV8813.GPIO_RESET			=	GPIO_RESET;
 		drv.DRV8813.GPIO_SLEEP			=	GPIO_SLEEP;
@@ -175,6 +171,8 @@ static DRV8813_DEF _getDrv8813Struct (enum Timer::ID id)
  */
 static void _hardwareInit (enum Drv8813::ID id)
 {
+	static bool TimerInitialized = false;
+
 	assert(id < HAL::Drv8813::DRV8813_MAX);
 
 	DRV8813_DEF drv = _getDrv8813Struct(id);
@@ -186,10 +184,37 @@ static void _hardwareInit (enum Drv8813::ID id)
 	GpioInst->PHA	 				= GPIO::GetInstance(drv.DRV8813.DRV5_GPIO_PHA);
 	GpioInst->PHB	 				= GPIO::GetInstance(drv.DRV8813.DRV5_GPIO_PHB);
 	GpioInst->ENA	 				= PWM::GetInstance(drv.DRV8813.DRV5_GPIO_ENA);
-	GpioInst->ENA	 				= PWM::GetInstance(drv.DRV8813.DRV5_GPIO_ENB);
+	GpioInst->ENB	 				= PWM::GetInstance(drv.DRV8813.DRV5_GPIO_ENB);
 
+	if(TimerInitialized==false)
+	{
+		Drv8813->tim = Timer::GetInstance (TIMER_TICK_REF);
+		Drv8813->tim->SetPeriod(1000000u/FREQ_TICK_REF)
+		Drv8813->tim->TimerElapsed += TickDrv8813Event;
+		Drv8813->tim->Start();
+	}
 }
 
+/**
+ * @brief Tick event for step generation
+ */
+static void TickDrv8813Event (void * obj)
+{
+	static uint32
+	for (char i =0; i<DRV8813_MAX; i++)
+	{
+		Drv8813* drv = _drv8813[i];
+		if(_drv8813[i] != null && direction!=DISABLED)
+		{
+
+
+			if(nb_pulse!=0 or run)
+			{
+
+			}
+		}
+	}
+}
 
 /*----------------------------------------------------------------------------*/
 /* Class Implementation	                                                      */
@@ -218,7 +243,7 @@ namespace HAL
 	{
 		this->id = id;
 		this->def = _getDrv8813Struct(id);
-		this->
+		this->enable = true;
 
 		_hardwareInit(id);
 	}

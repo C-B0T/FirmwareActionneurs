@@ -44,7 +44,6 @@ typedef struct
 		Drv8813Mode		MODE;
 		uint32_t		USTEP_MODE;
 		uint32_t		PWM_FREQ;
-		uint32_t		STATE;
 		GPIO::ID		GPIO_DECAY;
 		GPIO::ID		GPIO_RESET;
 		GPIO::ID		GPIO_SLEEP;
@@ -123,6 +122,11 @@ namespace HAL
 			return this->id;
 		}
 
+		/**
+		 * @private
+		 * @brief timer source for tick stepper
+		 */
+		static Timer tim;
 		
 	private:
 
@@ -159,9 +163,39 @@ namespace HAL
 
 		/**
 		 * @private
+		 * @brief enable/forward/backward status
+		 */
+		Drv8813State direction;
+
+		/**
+		 * @private
+		 * @brief speed of movment (step/s)
+		 */
+		uint32_t speed1;
+
+		/**
+		 * @private
+		 * @brief speed of movment (PWM)
+		 */
+		uint32_t pwm1;
+
+		/**
+		 * @private
+		 * @brief speed of movment (PWM)
+		 */
+		uint32_t pwm2;
+
+		/**
+		 * @private
 		 * @brief pulse number to execute
 		 */
 		uint32_t nb_pulse;
+
+		/**
+		 * @private
+		 * @brief run rotation motor
+		 */
+		uint32_t run;
 
 	};
 }
