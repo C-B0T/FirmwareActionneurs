@@ -127,6 +127,12 @@ namespace HAL
 	private:
 
 		/**
+			 * @private
+			 * @brief pulse number to execute
+			 */
+		uint32_t nb_pulse
+
+		/**
 		 * @private
 		 * @brief Drv8813 constructor
 		 * @param id : Drv8813 identifier
