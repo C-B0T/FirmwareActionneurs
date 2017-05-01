@@ -14,9 +14,9 @@ using namespace HAL;
 /*----------------------------------------------------------------------------*/
 /* Definitions                                                                */
 /*----------------------------------------------------------------------------*/
-#define STEPPER_FREQ_PWM	(100000u)			//100kHz
+#define STEPPER_FREQ_PWM	(10000u)			//10kHz
 #define DC_FREQ_PWM			(10000u)			//10kHz
-#define FREQ_TICK_REF		(4000u)				//4kHz
+#define FREQ_TICK_REF		(4000u)				//1kHz
 #define TIMER_TICK_REF		Timer::TIMER7		//Warning: common to Servo Driver
 
 #define USTEP_1		16
@@ -68,14 +68,14 @@ using namespace HAL;
 /*----------------------------------------------------------------------------*/
 /* Const				                                                       */
 /*----------------------------------------------------------------------------*/
-const PWM_STEP_DEF		STEP_DEF_16[64] = {{true,true,100,0},{true,true,100,10},{true,true,98,20},{true,true,96,29},{true,true,92,38},{true,true,88,47},{true,true,83,56},{true,true,77,63},
-											{true,true,71,71},{true,true,63,77},{true,true,56,83},{true,true,47,88},{true,true,38,92},{true,true,29,96},{true,true,20,98},{true,true,10,100},
+const PWM_STEP_DEF		STEP_DEF_16[64] = {	{true,true,71,71},{true,true,63,77},{true,true,56,83},{true,true,47,88},{true,true,38,92},{true,true,29,96},{true,true,20,98},{true,true,10,100},
 											{true,true,0,100},{false,true,10,100},{false,true,20,98},{false,true,29,96},{false,true,38,92},{false,true,47,88},{false,true,56,83},{false,true,63,77},
 											{false,true,71,71},{false,true,77,63},{false,true,83,56},{false,true,88,47},{false,true,92,38},{false,true,96,29},{false,true,98,20},{false,true,100,10},
 											{false,true,100,0},{false,false,100,10},{false,false,98,20},{false,false,96,29},{false,false,92,38},{false,false,88,47},{false,false,83,56},{false,false,77,63},
 											{false,false,71,71},{false,false,63,77},{false,false,56,83},{false,false,47,88},{false,false,38,92},{false,false,29,96},{false,false,20,98},{false,false,10,100},
 											{true,false,0,100},{true,false,10,100},{true,false,20,98},{true,false,29,96},{true,false,38,92},{true,false,47,88},{true,false,56,83},{true,false,63,77},
-											{true,false,71,71},{true,false,77,63},{true,false,83,56},{true,false,88,47},{true,false,92,38},{true,false,96,29},{true,false,98,20},{true,false,100,10}};
+											{true,false,71,71},{true,false,77,63},{true,false,83,56},{true,false,88,47},{true,false,92,38},{true,false,96,29},{true,false,98,20},{true,false,100,10},
+											{true,true,100,0},{true,true,100,10},{true,true,98,20},{true,true,96,29},{true,true,92,38},{true,true,88,47},{true,true,83,56},{true,true,77,63}};
 
 /*----------------------------------------------------------------------------*/
 /* Private Members                                                            */
@@ -126,7 +126,7 @@ static DRV8813_DEF _getDrv8813Struct (enum Drv8813::ID id)
 		break;
 	case HAL::Drv8813::DRV8813_2:
 		drv.MODE				=	Drv8813Mode::STEPPER_MODE;
-		drv.USTEP_MODE			= 	USTEP_1;
+		drv.USTEP_MODE			= 	USTEP_4;
 		drv.CURRENT_COEF		=	25u;
 		drv.PWM_FREQ			=	STEPPER_FREQ_PWM;
 		drv.NB_MOTOR_STEP		=	200u;
@@ -211,6 +211,10 @@ static void ManageStepper (Drv8813* drv)
 		pwmB *= drv->def.CURRENT_COEF;
 		pwmB /= 100u;
 
+		//////// TO DELETE, RESOLVE TORQUE PB ONLY ///////
+		if(pwmA==71) pwmA+=FREQ_TICK_REF/drv->period_tick*100;
+		if(pwmB==71) pwmB=100;
+
 		//Set phase and PWM
 		if(STEP_DEF_16[drv->stepIndex].PositivA)
 			drv->GpioInst.PHA->Set(GPIO::State::High);
@@ -260,12 +264,14 @@ static void TickDrv8813Event (void * obj)
 						if(drv->position == 0)
 							drv->def.NB_MOTOR_STEP=0;
 						drv->position -= 1;
-					}		
+					}
+
+					if(drv->nb_pulse > 0)
+						drv->nb_pulse--;
+
+					ManageStepper(drv);		//manage IO pin and PWM function of step index
 				}
-				if(drv->nb_pulse > 0)
-					drv->nb_pulse--;
 			}
-			ManageStepper(drv);		//manage IO pin and PWM function of step index
 		}
 	}
 
@@ -337,6 +343,7 @@ namespace HAL
 
 		this->GpioInst.RESET->Set(GPIO::State::High);
 		this->GpioInst.SLEEP->Set(GPIO::State::High);
+		this->GpioInst.DECAY->Set(GPIO::State::High);
 		this->GpioInst.ENA->SetState(PWM::State::ENABLED);
 		this->GpioInst.ENB->SetState(PWM::State::ENABLED);
 
