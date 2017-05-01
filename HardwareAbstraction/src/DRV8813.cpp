@@ -15,8 +15,9 @@ using namespace HAL;
 /*----------------------------------------------------------------------------*/
 /* Definitions                                                                */
 /*----------------------------------------------------------------------------*/
-#define STEPPER_FREQ	(1000000u)			//1MHz
-#define DC_FREQ			(10000u)			//10kHz
+#define STEPPER_FREQ_PWM	(1000000u)			//1MHz
+#define DC_FREQ_PWM			(10000u)			//10kHz
+#define TIMER_TICK_REF		7
 
 #define USTEP_1		0
 #define USTEP_2		1
@@ -217,7 +218,7 @@ namespace HAL
 	{
 		this->id = id;
 		this->def = _getDrv8813Struct(id);
-		this->period_us = this->def.TIMER.PERIOD;
+		this->
 
 		_hardwareInit(id);
 	}
