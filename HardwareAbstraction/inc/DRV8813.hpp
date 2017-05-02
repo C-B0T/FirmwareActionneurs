@@ -33,14 +33,24 @@ enum Drv8813State
 };
 
 /**
+ * @brief Steps PWM structure
+ * Used to define PWM duty cycle for each step in the mode
+ */
+typedef struct
+{
+		bool 			PositivA		//true= positive current, false = negative current
+		bool			PositivB		//true= positive current, false = negative current
+		uint32_t		PWM_A;			//in %
+		uint32_t		PWM_B;			//in %
+}PWM_STEP_DEF;
+
+/**
  * @brief DRV8813 Definition structure
  * Used to define peripheral definition in order to initialize them
  */
 typedef struct
 {
 	// Drv8813 definitions
-	struct Drv8813
-	{
 		Drv8813Mode		MODE;
 		uint32_t		USTEP_MODE;
 		uint32_t		PWM_FREQ;
@@ -52,7 +62,7 @@ typedef struct
 		GPIO::ID		GPIO_PHB;
 		PWM::ID			GPIO_ENA;
 		PWM::ID			GPIO_ENB;
-	}DRV8813;
+		uint32_t		CURRENT_COEF;	//current coef for pwm (0 to 100%)
 }DRV8813_DEF;
 
 /**
@@ -169,9 +179,15 @@ namespace HAL
 
 		/**
 		 * @private
-		 * @brief speed of movment (step/s)
+		 * @brief speed of movment (nb tick between two step)
 		 */
-		uint32_t speed1;
+		uint32_t period_tick;
+
+		/**
+		 * @private
+		 * @brief index in step corresponding to one rotation
+		 */
+		uint32_t stepIndex;
 
 		/**
 		 * @private
