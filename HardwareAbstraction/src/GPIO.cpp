@@ -16,19 +16,19 @@ using namespace HAL;
 /*----------------------------------------------------------------------------*/
 
 // LED1
-#define GPIO0_PORT				(GPIOB)//(GPIOE)
-#define GPIO0_PIN				(GPIO_Pin_0)//(GPIO_Pin_2)
-#define GPIO0_MODE				(GPIO_Mode_OUT)//(GPIO_Mode_OUT)
+#define GPIO0_PORT				(GPIOE)			//(GPIOB)
+#define GPIO0_PIN				(GPIO_Pin_2)	//(GPIO_Pin_0)
+#define GPIO0_MODE				(GPIO_Mode_OUT)	
 
 // LED2
-#define GPIO1_PORT				(GPIOB)//(GPIOE)
-#define GPIO1_PIN				(GPIO_Pin_7)//(GPIO_Pin_3)
-#define GPIO1_MODE				(GPIO_Mode_OUT)//(GPIO_Mode_OUT)
+#define GPIO1_PORT				(GPIOE)			//(GPIOB)
+#define GPIO1_PIN				(GPIO_Pin_3)	//(GPIO_Pin_7)
+#define GPIO1_MODE				(GPIO_Mode_OUT) 
 
 // LED3
-#define GPIO2_PORT				(GPIOB)//(GPIOB)
-#define GPIO2_PIN				(GPIO_Pin_14)//(GPIO_Pin_7)
-#define GPIO2_MODE				(GPIO_Mode_OUT)//(GPIO_Mode_OUT)
+#define GPIO2_PORT				(GPIOB)			//(GPIOB)
+#define GPIO2_PIN				(GPIO_Pin_8)	//(GPIO_Pin_14)
+#define GPIO2_MODE				(GPIO_Mode_OUT) 
 
 // LED4
 #define GPIO3_PORT				(GPIOC)
