@@ -15,7 +15,7 @@ using namespace HAL;
 /*----------------------------------------------------------------------------*/
 /* Definitions                                                                */
 /*----------------------------------------------------------------------------*/
-#define STEPPER_FREQ_PWM	(16000u)			//16kHz
+#define STEPPER_FREQ_PWM	(100000u)			//100kHz
 #define DC_FREQ_PWM			(10000u)			//10kHz
 #define FREQ_TICK_REF		(4000u)				//4kHz
 #define TIMER_TICK_REF		Timer::TIMER7		//Warning: common to Servo Driver
@@ -25,6 +25,8 @@ using namespace HAL;
 #define USTEP_4		2
 #define USTEP_8		3
 #define USTEP_16	4
+
+#define ERROR_GENERAL	0xFF
 
 #define	GPIO_DECAY	GPIO::GPIO6
 #define	GPIO_RESET	GPIO::GPIO7
@@ -110,6 +112,7 @@ static DRV8813_DEF _getDrv8813Struct (enum Timer::ID id)
 		drv.USTEP_MODE			= 	USTEP_1;
 		drv.CURRENT_COEF		=	100u;
 		drv.PWM_FREQ			=	STEPPER_FREQ;
+		drv.NB_MOTOR_STEP		=	200u;
 		drv.GPIO_DECAY			=	GPIO_DECAY;
 		drv.GPIO_RESET			=	GPIO_RESET;
 		drv.GPIO_SLEEP			=	GPIO_SLEEP;
@@ -124,6 +127,7 @@ static DRV8813_DEF _getDrv8813Struct (enum Timer::ID id)
 		drv.USTEP_MODE			= 	USTEP_1;
 		drv.CURRENT_COEF		=	100u;
 		drv.PWM_FREQ			=	STEPPER_FREQ;
+		drv.NB_MOTOR_STEP		=	200u;
 		drv.GPIO_DECAY			=	GPIO_DECAY;
 		drv.GPIO_RESET			=	GPIO_RESET;
 		drv.GPIO_SLEEP			=	GPIO_SLEEP;
@@ -138,6 +142,7 @@ static DRV8813_DEF _getDrv8813Struct (enum Timer::ID id)
 		drv.USTEP_MODE			= 	USTEP_1;
 		drv.CURRENT_COEF		=	100u;			
 		drv.PWM_FREQ			=	STEPPER_FREQ;
+		drv.NB_MOTOR_STEP		=	200u;
 		drv.GPIO_DECAY			=	GPIO_DECAY;
 		drv.GPIO_RESET			=	GPIO_RESET;
 		drv.GPIO_SLEEP			=	GPIO_SLEEP;
@@ -152,6 +157,7 @@ static DRV8813_DEF _getDrv8813Struct (enum Timer::ID id)
 		drv.USTEP_MODE			= 	USTEP_1;
 		drv.CURRENT_COEF		=	100u;
 		drv.PWM_FREQ			=	STEPPER_FREQ;
+		drv.NB_MOTOR_STEP		=	200u;
 		drv.GPIO_DECAY			=	GPIO_DECAY;
 		drv.GPIO_RESET			=	GPIO_RESET;
 		drv.GPIO_SLEEP			=	GPIO_SLEEP;
@@ -166,6 +172,7 @@ static DRV8813_DEF _getDrv8813Struct (enum Timer::ID id)
 		drv.USTEP_MODE			= 	USTEP_1;
 		drv.CURRENT_COEF		=	100u;
 		drv.PWM_FREQ			=	STEPPER_FREQ;
+		drv.NB_MOTOR_STEP		=	200u;
 		drv.GPIO_DECAY			=	GPIO_DECAY;
 		drv.GPIO_RESET			=	GPIO_RESET;
 		drv.GPIO_SLEEP			=	GPIO_SLEEP;
@@ -225,21 +232,31 @@ static void TickDrv8813Event (void * obj)
 		{
 			if((nb_pulse!=0 or run) && _drv8813[i]->direction!=DISABLED)
 			{
-				if(CptStep % _drv8813[i]->period_tick)
+				if((CptStep % _drv8813[i]->period_tick) == 0)
 				{
 					if(_drv8813[i]->direction == Drv8813State.FORWARD)				//forward 1 step
 					{
 						_drv8813[i]->stepIndex += _drv8813[i]->def->USTEP_MODE;
 						if(_drv8813[i]->stepIndex >= MAX_USTEP)
 							_drv8813[i]->stepIndex=0;
+
+						_drv8813[i]->position += 1;
+						if(_drv8813[i]->position >= _drv8813[i]->def->NB_MOTOR_STEP)
+							_drv8813[i]->position=0;
 					}
 					else if(_drv8813[i]->direction == Drv8813State.BACKWARD)		//backward 1 step
 					{
 						if(_drv8813[i]->stepIndex == 0)
 							_drv8813[i]->stepIndex = MAX_USTEP;
 						_drv8813[i]->stepIndex -= _drv8813[i]->def->USTEP_MODE;
+
+						if(_drv8813[i]->position == 0)
+							_drv8813[i]->def->NB_MOTOR_STEP=0;
+						_drv8813[i]->position -= 1;
 					}		
 				}
+				if(nb_pulse > 0)
+					nb_pulse--;
 			}
 			ManageStepper(_drv8813[i]);		//manage IO pin and PWM function of step index
 		}
@@ -317,6 +334,56 @@ namespace HAL
 		this->enable = true;
 
 		_hardwareInit(id);
+	}
+
+	uint32_t SetSpeed (uint32_t speed)
+	{
+		if(speed>FREQ_TICK_REF)		// Speed out of range
+			return ERROR_GENERAL;
+	
+		if(speed==0)
+			return ERROR_GENERAL;
+
+		period_tick = FREQ_TICK_REF/speed;
+		return 0;
+	}
+
+	void SetDirection (Drv8813State dir)
+	{
+		this->dir=direction;
+	}
+
+	void Start (void)
+	{
+		this->run ) = true;
+	}	
+
+	void Stop (void)
+	{
+		this->run ) = false;
+	}	
+
+	void PulseRotation (uint32_t pulse);
+	{
+		this->nb_pulse=pulse;
+	}
+
+	uint32_t ReadPosition (void)
+	{
+		return this->position;
+	}
+
+	uint32_t SetPosition (uint32_t pos)
+	{
+		if(pos >= this->def->NB_MOTOR_STEP)
+			return ERROR_GENERAL;
+
+		if(this->def->NB_MOTOR_STEP = 0)
+			return ERROR_GENERAL;
+
+		this->position = pos;
+
+		return 0;
 	}
 }
 
