@@ -54,6 +54,7 @@ typedef struct
 		Drv8813Mode		MODE;
 		uint32_t		USTEP_MODE;
 		uint32_t		PWM_FREQ;
+		uint32_t		NB_MOTOR_STEP;
 		GPIO::ID		GPIO_DECAY;
 		GPIO::ID		GPIO_RESET;
 		GPIO::ID		GPIO_SLEEP;
@@ -124,6 +125,48 @@ namespace HAL
 		 */
 		static Drv8813* GetInstance (enum ID id);
 
+		 /**
+		 * @brief Set speed
+		 * @param speed: in step/s
+		 * @return 0 if OK, else speed is out of range
+		 */
+		uint32_t SetSpeed (uint32_t speed);
+
+		/**
+		 * @brief Set direction
+		 * @param dir: motor's direction DISABLE, FORWARD, BACKWARD
+		 */
+		void SetDirection (Drv8813State dir);
+
+		/**
+		 * @brief Start rotation
+		 */
+		void Start (void);
+
+		/**
+		 * @brief Stop rotation
+		 */
+		void Stop (void);
+
+		/**
+		 * @brief rotation of step number
+		 * @param pulse: number of step
+		 */
+		void PulseRotation (uint32_t pulse);
+
+		/**
+		 * @brief read position in step
+		 * @return position in step
+		 */
+		uint32_t ReadPosition (void);
+
+		/**
+		 * @brief set position in step
+		 * @param pos: in step
+		 * @return 0 if OK, else position is out of range
+		*/
+		uint32_t SetPosition (uint32_t pos);
+
 		/**
 		 * @brief Return Drv8813 identifier
 		 */
@@ -185,7 +228,7 @@ namespace HAL
 
 		/**
 		 * @private
-		 * @brief index in step corresponding to one rotation
+		 * @brief index in step16
 		 */
 		uint32_t stepIndex;
 
@@ -206,6 +249,12 @@ namespace HAL
 		 * @brief pulse number to execute
 		 */
 		uint32_t nb_pulse;
+
+		/**
+		 * @private
+		 * @brief position of the rotation in step
+		 */
+		uint32_t position;
 
 		/**
 		 * @private
