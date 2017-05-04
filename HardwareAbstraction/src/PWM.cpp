@@ -15,7 +15,7 @@ using namespace HAL;
 /* Definitions                                                                */
 /*----------------------------------------------------------------------------*/
 
-// TIM2_CH1
+// TIM1_CH1
 #define PWM0_IO_PORT		(GPIOA)
 #define PWM0_IO_PIN			(GPIO_Pin_0)
 #define PWM0_IO_PINSOURCE	(GPIO_PinSource0)
@@ -25,6 +25,61 @@ using namespace HAL;
 #define PWM0_TIMER			(TIM2)
 #define PWM0_TIMER_CHANNEL	(TIM_Channel_1)
 #define PWM0_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB1 clock
+
+// TIM1_CH2
+#define PWM1_IO_PORT		(GPIOA)
+#define PWM1_IO_PIN			(GPIO_Pin_2)
+#define PWM1_IO_PINSOURCE	(GPIO_PinSource2)
+#define PWM1_IO_AF			(GPIO_AF_TIM2)
+#define PWM1_FREQ			(10000)
+#define PWM1_DUTYCYCLE		(0.5f)
+#define PWM1_TIMER			(TIM2)
+#define PWM1_TIMER_CHANNEL	(TIM_Channel_3)
+#define PWM1_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB1 clock
+
+// TIM1_CH3
+#define PWM1_IO_PORT		(GPIOA)
+#define PWM1_IO_PIN			(GPIO_Pin_2)
+#define PWM1_IO_PINSOURCE	(GPIO_PinSource2)
+#define PWM1_IO_AF			(GPIO_AF_TIM2)
+#define PWM1_FREQ			(10000)
+#define PWM1_DUTYCYCLE		(0.5f)
+#define PWM1_TIMER			(TIM2)
+#define PWM1_TIMER_CHANNEL	(TIM_Channel_3)
+#define PWM1_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB1 clock
+
+// TIM1_CH4
+#define PWM1_IO_PORT		(GPIOA)
+#define PWM1_IO_PIN			(GPIO_Pin_2)
+#define PWM1_IO_PINSOURCE	(GPIO_PinSource2)
+#define PWM1_IO_AF			(GPIO_AF_TIM2)
+#define PWM1_FREQ			(10000)
+#define PWM1_DUTYCYCLE		(0.5f)
+#define PWM1_TIMER			(TIM2)
+#define PWM1_TIMER_CHANNEL	(TIM_Channel_3)
+#define PWM1_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB1 clock
+
+// TIM2_CH1
+#define PWM1_IO_PORT		(GPIOA)
+#define PWM1_IO_PIN			(GPIO_Pin_2)
+#define PWM1_IO_PINSOURCE	(GPIO_PinSource2)
+#define PWM1_IO_AF			(GPIO_AF_TIM2)
+#define PWM1_FREQ			(10000)
+#define PWM1_DUTYCYCLE		(0.5f)
+#define PWM1_TIMER			(TIM2)
+#define PWM1_TIMER_CHANNEL	(TIM_Channel_3)
+#define PWM1_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB1 clock
+
+// TIM2_CH2
+#define PWM1_IO_PORT		(GPIOA)
+#define PWM1_IO_PIN			(GPIO_Pin_2)
+#define PWM1_IO_PINSOURCE	(GPIO_PinSource2)
+#define PWM1_IO_AF			(GPIO_AF_TIM2)
+#define PWM1_FREQ			(10000)
+#define PWM1_DUTYCYCLE		(0.5f)
+#define PWM1_TIMER			(TIM2)
+#define PWM1_TIMER_CHANNEL	(TIM_Channel_3)
+#define PWM1_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB1 clock
 
 // TIM2_CH3
 #define PWM1_IO_PORT		(GPIOA)
@@ -36,6 +91,216 @@ using namespace HAL;
 #define PWM1_TIMER			(TIM2)
 #define PWM1_TIMER_CHANNEL	(TIM_Channel_3)
 #define PWM1_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB1 clock
+
+// TIM2_CH4
+#define PWM1_IO_PORT		(GPIOA)
+#define PWM1_IO_PIN			(GPIO_Pin_2)
+#define PWM1_IO_PINSOURCE	(GPIO_PinSource2)
+#define PWM1_IO_AF			(GPIO_AF_TIM2)
+#define PWM1_FREQ			(10000)
+#define PWM1_DUTYCYCLE		(0.5f)
+#define PWM1_TIMER			(TIM2)
+#define PWM1_TIMER_CHANNEL	(TIM_Channel_3)
+#define PWM1_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB1 clock
+
+// TIM3_CH1
+#define PWM1_IO_PORT		(GPIOA)
+#define PWM1_IO_PIN			(GPIO_Pin_2)
+#define PWM1_IO_PINSOURCE	(GPIO_PinSource2)
+#define PWM1_IO_AF			(GPIO_AF_TIM2)
+#define PWM1_FREQ			(10000)
+#define PWM1_DUTYCYCLE		(0.5f)
+#define PWM1_TIMER			(TIM2)
+#define PWM1_TIMER_CHANNEL	(TIM_Channel_3)
+#define PWM1_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB1 clock
+
+// TIM3_CH2
+#define PWM1_IO_PORT		(GPIOA)
+#define PWM1_IO_PIN			(GPIO_Pin_2)
+#define PWM1_IO_PINSOURCE	(GPIO_PinSource2)
+#define PWM1_IO_AF			(GPIO_AF_TIM2)
+#define PWM1_FREQ			(10000)
+#define PWM1_DUTYCYCLE		(0.5f)
+#define PWM1_TIMER			(TIM2)
+#define PWM1_TIMER_CHANNEL	(TIM_Channel_3)
+#define PWM1_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB1 clock
+
+// TIM3_CH3
+#define PWM1_IO_PORT		(GPIOA)
+#define PWM1_IO_PIN			(GPIO_Pin_2)
+#define PWM1_IO_PINSOURCE	(GPIO_PinSource2)
+#define PWM1_IO_AF			(GPIO_AF_TIM2)
+#define PWM1_FREQ			(10000)
+#define PWM1_DUTYCYCLE		(0.5f)
+#define PWM1_TIMER			(TIM2)
+#define PWM1_TIMER_CHANNEL	(TIM_Channel_3)
+#define PWM1_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB1 clock
+
+// TIM3_CH4
+#define PWM1_IO_PORT		(GPIOA)
+#define PWM1_IO_PIN			(GPIO_Pin_2)
+#define PWM1_IO_PINSOURCE	(GPIO_PinSource2)
+#define PWM1_IO_AF			(GPIO_AF_TIM2)
+#define PWM1_FREQ			(10000)
+#define PWM1_DUTYCYCLE		(0.5f)
+#define PWM1_TIMER			(TIM2)
+#define PWM1_TIMER_CHANNEL	(TIM_Channel_3)
+#define PWM1_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB1 clock
+
+// TIM4_CH1
+#define PWM1_IO_PORT		(GPIOA)
+#define PWM1_IO_PIN			(GPIO_Pin_2)
+#define PWM1_IO_PINSOURCE	(GPIO_PinSource2)
+#define PWM1_IO_AF			(GPIO_AF_TIM2)
+#define PWM1_FREQ			(10000)
+#define PWM1_DUTYCYCLE		(0.5f)
+#define PWM1_TIMER			(TIM2)
+#define PWM1_TIMER_CHANNEL	(TIM_Channel_3)
+#define PWM1_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB1 clock
+
+// TIM4_CH2
+#define PWM1_IO_PORT		(GPIOA)
+#define PWM1_IO_PIN			(GPIO_Pin_2)
+#define PWM1_IO_PINSOURCE	(GPIO_PinSource2)
+#define PWM1_IO_AF			(GPIO_AF_TIM2)
+#define PWM1_FREQ			(10000)
+#define PWM1_DUTYCYCLE		(0.5f)
+#define PWM1_TIMER			(TIM2)
+#define PWM1_TIMER_CHANNEL	(TIM_Channel_3)
+#define PWM1_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB1 clock
+
+// TIM4_CH3
+#define PWM1_IO_PORT		(GPIOA)
+#define PWM1_IO_PIN			(GPIO_Pin_2)
+#define PWM1_IO_PINSOURCE	(GPIO_PinSource2)
+#define PWM1_IO_AF			(GPIO_AF_TIM2)
+#define PWM1_FREQ			(10000)
+#define PWM1_DUTYCYCLE		(0.5f)
+#define PWM1_TIMER			(TIM2)
+#define PWM1_TIMER_CHANNEL	(TIM_Channel_3)
+#define PWM1_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB1 clock
+
+// TIM4_CH4
+#define PWM1_IO_PORT		(GPIOA)
+#define PWM1_IO_PIN			(GPIO_Pin_2)
+#define PWM1_IO_PINSOURCE	(GPIO_PinSource2)
+#define PWM1_IO_AF			(GPIO_AF_TIM2)
+#define PWM1_FREQ			(10000)
+#define PWM1_DUTYCYCLE		(0.5f)
+#define PWM1_TIMER			(TIM2)
+#define PWM1_TIMER_CHANNEL	(TIM_Channel_3)
+#define PWM1_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB1 clock
+
+// TIM5_CH1
+#define PWM1_IO_PORT		(GPIOA)
+#define PWM1_IO_PIN			(GPIO_Pin_2)
+#define PWM1_IO_PINSOURCE	(GPIO_PinSource2)
+#define PWM1_IO_AF			(GPIO_AF_TIM2)
+#define PWM1_FREQ			(10000)
+#define PWM1_DUTYCYCLE		(0.5f)
+#define PWM1_TIMER			(TIM2)
+#define PWM1_TIMER_CHANNEL	(TIM_Channel_3)
+#define PWM1_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB1 clock
+
+// TIM5_CH2
+#define PWM1_IO_PORT		(GPIOA)
+#define PWM1_IO_PIN			(GPIO_Pin_2)
+#define PWM1_IO_PINSOURCE	(GPIO_PinSource2)
+#define PWM1_IO_AF			(GPIO_AF_TIM2)
+#define PWM1_FREQ			(10000)
+#define PWM1_DUTYCYCLE		(0.5f)
+#define PWM1_TIMER			(TIM2)
+#define PWM1_TIMER_CHANNEL	(TIM_Channel_3)
+#define PWM1_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB1 clock
+
+// TIM5_CH3
+#define PWM1_IO_PORT		(GPIOA)
+#define PWM1_IO_PIN			(GPIO_Pin_2)
+#define PWM1_IO_PINSOURCE	(GPIO_PinSource2)
+#define PWM1_IO_AF			(GPIO_AF_TIM2)
+#define PWM1_FREQ			(10000)
+#define PWM1_DUTYCYCLE		(0.5f)
+#define PWM1_TIMER			(TIM2)
+#define PWM1_TIMER_CHANNEL	(TIM_Channel_3)
+#define PWM1_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB1 clock
+
+// TIM5_CH4
+#define PWM1_IO_PORT		(GPIOA)
+#define PWM1_IO_PIN			(GPIO_Pin_2)
+#define PWM1_IO_PINSOURCE	(GPIO_PinSource2)
+#define PWM1_IO_AF			(GPIO_AF_TIM2)
+#define PWM1_FREQ			(10000)
+#define PWM1_DUTYCYCLE		(0.5f)
+#define PWM1_TIMER			(TIM2)
+#define PWM1_TIMER_CHANNEL	(TIM_Channel_3)
+#define PWM1_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB1 clock
+
+// TIM9_CH1
+#define PWM1_IO_PORT		(GPIOA)
+#define PWM1_IO_PIN			(GPIO_Pin_2)
+#define PWM1_IO_PINSOURCE	(GPIO_PinSource2)
+#define PWM1_IO_AF			(GPIO_AF_TIM2)
+#define PWM1_FREQ			(10000)
+#define PWM1_DUTYCYCLE		(0.5f)
+#define PWM1_TIMER			(TIM2)
+#define PWM1_TIMER_CHANNEL	(TIM_Channel_3)
+#define PWM1_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB1 clock
+
+// TIM9_CH2
+#define PWM1_IO_PORT		(GPIOA)
+#define PWM1_IO_PIN			(GPIO_Pin_2)
+#define PWM1_IO_PINSOURCE	(GPIO_PinSource2)
+#define PWM1_IO_AF			(GPIO_AF_TIM2)
+#define PWM1_FREQ			(10000)
+#define PWM1_DUTYCYCLE		(0.5f)
+#define PWM1_TIMER			(TIM2)
+#define PWM1_TIMER_CHANNEL	(TIM_Channel_3)
+#define PWM1_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB1 clock
+
+// TIM10_CH1
+#define PWM1_IO_PORT		(GPIOA)
+#define PWM1_IO_PIN			(GPIO_Pin_2)
+#define PWM1_IO_PINSOURCE	(GPIO_PinSource2)
+#define PWM1_IO_AF			(GPIO_AF_TIM2)
+#define PWM1_FREQ			(10000)
+#define PWM1_DUTYCYCLE		(0.5f)
+#define PWM1_TIMER			(TIM2)
+#define PWM1_TIMER_CHANNEL	(TIM_Channel_3)
+#define PWM1_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB1 clock
+
+// TIM11_CH1
+#define PWM1_IO_PORT		(GPIOA)
+#define PWM1_IO_PIN			(GPIO_Pin_2)
+#define PWM1_IO_PINSOURCE	(GPIO_PinSource2)
+#define PWM1_IO_AF			(GPIO_AF_TIM2)
+#define PWM1_FREQ			(10000)
+#define PWM1_DUTYCYCLE		(0.5f)
+#define PWM1_TIMER			(TIM2)
+#define PWM1_TIMER_CHANNEL	(TIM_Channel_3)
+#define PWM1_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB1 clock
+
+// TIM13_CH1
+#define PWM1_IO_PORT		(GPIOA)
+#define PWM1_IO_PIN			(GPIO_Pin_2)
+#define PWM1_IO_PINSOURCE	(GPIO_PinSource2)
+#define PWM1_IO_AF			(GPIO_AF_TIM2)
+#define PWM1_FREQ			(10000)
+#define PWM1_DUTYCYCLE		(0.5f)
+#define PWM1_TIMER			(TIM2)
+#define PWM1_TIMER_CHANNEL	(TIM_Channel_3)
+#define PWM1_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB1 clock
+
+// TIM14_CH1
+#define PWM1_IO_PORT		(GPIOA)
+#define PWM1_IO_PIN			(GPIO_Pin_2)
+#define PWM1_IO_PINSOURCE	(GPIO_PinSource2)
+#define PWM1_IO_AF			(GPIO_AF_TIM2)
+#define PWM1_FREQ			(10000)
+#define PWM1_DUTYCYCLE		(0.5f)
+#define PWM1_TIMER			(TIM2)
+#define PWM1_TIMER_CHANNEL	(TIM_Channel_3)
+#define PWM1_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB1 clock
+
 
 /*----------------------------------------------------------------------------*/
 /* Private Members                                                            */
