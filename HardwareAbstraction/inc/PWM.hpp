@@ -73,8 +73,34 @@ namespace HAL
 		 */
 		enum ID
 		{
-			PWM0,  //!< PWM_OUT0
-			PWM1,  //!< PWM_OUT2
+			PWM0,  //!< 
+			PWM1,  //!<
+			PWM2,  //!<
+			PWM3,  //!<
+			PWM4,  //!<
+			PWM5,  //!<
+			PWM6,  //!<
+			PWM7,  //!<
+			PWM8,  //!<
+			PWM9,  //!<
+			PWM10,  //!<
+			PWM11,  //!<
+			PWM12,  //!<
+			PWM13,  //!<
+			PWM14,  //!<
+			PWM15,  //!<
+			PWM16,  //!<
+			PWM17,  //!<
+			PWM18,  //!<
+			PWM19,  //!<
+			PWM20,  //!<
+			PWM21,  //!<
+			PWM22,  //!<
+			PWM23,  //!<
+			PWM24,  //!<
+			PWM25,  //!<
+			PWM26,  //!<
+			PWM27,  //!< 
 			PWM_MAX//!< PWM_MAX
 		};
 
