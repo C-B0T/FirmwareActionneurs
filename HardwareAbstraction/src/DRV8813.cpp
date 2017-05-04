@@ -36,36 +36,36 @@ using namespace HAL;
 #define	DRV1_GPIO_FAULT	GPIO::GPIO9
 #define	DRV1_GPIO_PHA	GPIO::GPIO10
 #define	DRV1_GPIO_PHB	GPIO::GPIO11
-#define	DRV1_GPIO_ENA	PWM::PWMx
-#define	DRV1_GPIO_ENB	PWM::PWMx
+#define	DRV1_GPIO_ENA	PWM::PWM0
+#define	DRV1_GPIO_ENB	PWM::PWM1
 
 //Drv88113 2
 #define	DRV2_GPIO_FAULT	GPIO::GPIO12
 #define	DRV2_GPIO_PHA	GPIO::GPIO13
 #define	DRV2_GPIO_PHB	GPIO::GPIO14
-#define	DRV2_GPIO_ENA	PWM::PWMx
-#define	DRV2_GPIO_ENB	PWM::PWMx
+#define	DRV2_GPIO_ENA	PWM::PWM2
+#define	DRV2_GPIO_ENB	PWM::PWM3
 
 //Drv88113 3
 #define	DRV3_GPIO_FAULT	GPIO::GPIO15
 #define	DRV3_GPIO_PHA	GPIO::GPIO16
 #define	DRV3_GPIO_PHB	GPIO::GPIO17
-#define	DRV3_GPIO_ENA	PWM::PWMx
-#define	DRV3_GPIO_ENB	PWM::PWMx
+#define	DRV3_GPIO_ENA	PWM::PWM8
+#define	DRV3_GPIO_ENB	PWM::PWM9
 
 //Drv88113 4
 #define	DRV4_GPIO_FAULT	GPIO::GPIO18
 #define	DRV4_GPIO_PHA	GPIO::GPIO19
 #define	DRV4_GPIO_PHB	GPIO::GPIO20
-#define	DRV4_GPIO_ENA	PWM::PWMx
-#define	DRV4_GPIO_ENB	PWM::PWMx
+#define	DRV4_GPIO_ENA	PWM::PWM10
+#define	DRV4_GPIO_ENB	PWM::PWM11
 
 //Drv88113 5
 #define	DRV5_GPIO_FAULT	GPIO::GPIO21
 #define	DRV5_GPIO_PHA	GPIO::GPIO22
 #define	DRV5_GPIO_PHB	GPIO::GPIO23
-#define	DRV5_GPIO_ENA	PWM::PWMx
-#define	DRV5_GPIO_ENB	PWM::PWMx
+#define	DRV5_GPIO_ENA	PWM::PWM12
+#define	DRV5_GPIO_ENB	PWM::PWM13
 
 /*----------------------------------------------------------------------------*/
 /* Const				                                                       */
@@ -210,6 +210,9 @@ static void _hardwareInit (enum Drv8813::ID id)
 	drv->GpioInst->ENA	 				= PWM::GetInstance(drv.DRV8813.DRV5_GPIO_ENA);
 	drv->GpioInst->ENB	 				= PWM::GetInstance(drv.DRV8813.DRV5_GPIO_ENB);
 
+	drv->GpioInst->ENA->SetState(PWM::ENABLED);
+	drv->GpioInst->ENB->SetState(PWM::ENABLED);
+
 	if(TimerInitialized==false)
 	{
 		Drv8813->tim = Timer::GetInstance (TIMER_TICK_REF);
@@ -292,13 +295,13 @@ static void ManageStepper (DRV8813_DEF* def)
 			def->GpioInst->PHA->Set(GPIO::State::High);
 		else
 			def->GpioInst->PHA->Set(GPIO::State::Low);
-		def->GpioInst->ENA->SetDutyCycle(pwmA);
+		def->GpioInst->ENA->SetDutyCycle(pwmA/100f);
 
 		if(STEP_DEF_16[def->stepIndex]->PositivB)
 			def->GpioInst->PHB->Set(GPIO::State::High);
 		else
 			def->GpioInst->PHB->Set(GPIO::State::Low);
-		def->GpioInst->ENA->SetDutyCycle(pwmB);
+		def->GpioInst->ENA->SetDutyCycle(pwmB/100f);
 	}
 
 	
