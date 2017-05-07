@@ -18,18 +18,17 @@ using namespace HAL;
 #define L_ENCODER_ID    (Encoder::ENCODER0)
 #define R_ENCODER_ID    (Encoder::ENCODER1)
 
-#define WD          47.7            // Wheel diameter
+// Encoder wheel characteristic
+#define WD          41.1            // Wheel diameter
 #define WC          1.0             // Wheel correction (Difference between the (referent) right and left wheel)
 #define ER          4096            // Encoder resolution
-//#define ADW         254.0           // Axial distance between wheels
-#define ADW         252.68          // Axial distance between wheels
+#define ADW         79.30           // Axial distance between wheels
 
 #define _PI_        3.14159265358979323846
 #define _2_PI_      6.28318530717958647692  // 2*PI
 
-#define TICK_BY_MM  27.3332765997653373295  // (ER/(_PI_*WD))
-//#define ADW_TICK    6942.65225634039568170  // (ADW * TICK_BY_MM)
-#define ADW_TICK    6906.57233123  // (ADW * TICK_BY_MM)
+#define TICK_BY_MM  31.722561893    // (ER/(_PI_*WD))
+#define ADW_TICK    2515.599158127  // (ADW * TICK_BY_MM)
 
 
 
