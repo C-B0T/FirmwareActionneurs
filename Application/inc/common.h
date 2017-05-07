@@ -34,6 +34,9 @@
 
 #define vTaskDelayMs(t)	vTaskDelay((t) / portTICK_PERIOD_MS)
 
+#define	NO_ERROR			0u
+#define	ERROR_GENERAL		0xFF
+
 /*----------------------------------------------------------------------------*/
 /* Types										                              */
 /*----------------------------------------------------------------------------*/

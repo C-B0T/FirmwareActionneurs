@@ -21,6 +21,9 @@
 #include "Serial.hpp"
 #include "Encoder.hpp"
 #include "Timer.hpp"
+#include "SPIMaster.hpp"
+#include "ExtDAC.hpp"
+#include "DRV8813.hpp"
 
 // Other hardware objects
 

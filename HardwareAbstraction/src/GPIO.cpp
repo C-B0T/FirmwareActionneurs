@@ -11,24 +11,46 @@
 
 using namespace HAL;
 
+#define TARGET_NUCLEO	1
+
 /*----------------------------------------------------------------------------*/
 /* Definitions                                                                */
 /*----------------------------------------------------------------------------*/
+#if TARGET_NUCLEO==1
+
+// LED1
+#define GPIO0_PORT				(GPIOB)
+#define GPIO0_PIN				(GPIO_Pin_0)
+#define GPIO0_MODE				(GPIO_Mode_OUT)	
+
+// LED2
+#define GPIO1_PORT				(GPIOB)
+#define GPIO1_PIN				(GPIO_Pin_7)
+#define GPIO1_MODE				(GPIO_Mode_OUT) 
+
+// LED3
+#define GPIO2_PORT				(GPIOB)
+#define GPIO2_PIN				(GPIO_Pin_14)
+#define GPIO2_MODE				(GPIO_Mode_OUT) 
+
+#else
 
 // LED1
 #define GPIO0_PORT				(GPIOE)			//(GPIOB)
 #define GPIO0_PIN				(GPIO_Pin_2)	//(GPIO_Pin_0)
-#define GPIO0_MODE				(GPIO_Mode_OUT)	
+#define GPIO0_MODE				(GPIO_Mode_OUT)
 
 // LED2
 #define GPIO1_PORT				(GPIOE)			//(GPIOB)
 #define GPIO1_PIN				(GPIO_Pin_3)	//(GPIO_Pin_7)
-#define GPIO1_MODE				(GPIO_Mode_OUT) 
+#define GPIO1_MODE				(GPIO_Mode_OUT)
 
 // LED3
 #define GPIO2_PORT				(GPIOB)			//(GPIOB)
 #define GPIO2_PIN				(GPIO_Pin_8)	//(GPIO_Pin_14)
-#define GPIO2_MODE				(GPIO_Mode_OUT) 
+#define GPIO2_MODE				(GPIO_Mode_OUT)
+
+#endif
 
 // LED4
 #define GPIO3_PORT				(GPIOC)
@@ -807,7 +829,7 @@ static void _hardwareInit (enum GPIO::ID id)
 	if(gpio.IO.MODE == GPIO_Mode_IN)
 	{
 		// Connect INT Line to GPIO pin
-		SYSCFG_EXTILineConfig(gpio.INT.PORTSOURCE, gpio.INT.PINSOURCE);
+		//SYSCFG_EXTILineConfig(gpio.INT.PORTSOURCE, gpio.INT.PINSOURCE);
 
 		// Init INT
 		EXTIStruct.EXTI_Line		= 	gpio.INT.LINE;
@@ -815,9 +837,9 @@ static void _hardwareInit (enum GPIO::ID id)
 		EXTIStruct.EXTI_Mode		=	EXTI_Mode_Interrupt;
 		EXTIStruct.EXTI_LineCmd		=	ENABLE;
 
-		EXTI_ClearITPendingBit(gpio.INT.LINE);
+		//EXTI_ClearITPendingBit(gpio.INT.LINE);
 
-		EXTI_Init(&EXTIStruct);
+		//EXTI_Init(&EXTIStruct);
 
 		// Init NVIC
 		NVICStruct.NVIC_IRQChannel						=	gpio.INT.CHANNEL;
@@ -825,7 +847,7 @@ static void _hardwareInit (enum GPIO::ID id)
 		NVICStruct.NVIC_IRQChannelSubPriority 			= 	0;
 		NVICStruct.NVIC_IRQChannelCmd					=	ENABLE;
 
-		NVIC_Init(&NVICStruct);
+		//NVIC_Init(&NVICStruct);
 	}
 }
 

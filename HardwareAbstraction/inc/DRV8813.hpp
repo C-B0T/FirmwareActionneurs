@@ -14,23 +14,32 @@
 #include "Observable.hpp"
 #include "Event.hpp"
 
+#include "GPIO.hpp"
+#include "PWM.hpp"
+#include "Timer.hpp"
+
+/**
+ * @namespace HAL
+ */
+namespace HAL {
+
 /*----------------------------------------------------------------------------*/
 /* Definitions                                                                */
 /*----------------------------------------------------------------------------*/
-typedef enum Drv8813Mode Drv8813Mode
 enum Drv8813Mode
 {
 	STEPPER_MODE,
 	DC_MODE
 };
+typedef enum Drv8813Mode Drv8813Mode_t;
 
-typedef enum Drv8813State Drv8813State
 enum Drv8813State
 {
 	DISABLED,
 	FORWARD,
 	BACKWARD
 };
+typedef enum Drv8813State Drv8813State_t;
 
 /**
  * @brief Steps PWM structure
@@ -38,8 +47,8 @@ enum Drv8813State
  */
 typedef struct
 {
-		bool 			PositivA		//true= positive current, false = negative current
-		bool			PositivB		//true= positive current, false = negative current
+		bool 			PositivA;		//true= positive current, false = negative current
+		bool			PositivB;		//true= positive current, false = negative current
 		uint32_t		PWM_A;			//in %
 		uint32_t		PWM_B;			//in %
 }PWM_STEP_DEF;
@@ -51,19 +60,19 @@ typedef struct
 typedef struct
 {
 	// Drv8813 definitions
-		Drv8813Mode		MODE;
-		uint32_t		USTEP_MODE;
-		uint32_t		PWM_FREQ;
-		uint32_t		NB_MOTOR_STEP;
-		GPIO::ID		GPIO_DECAY;
-		GPIO::ID		GPIO_RESET;
-		GPIO::ID		GPIO_SLEEP;
-		GPIO::ID		GPIO_FAULT;
-		GPIO::ID		GPIO_PHA;
-		GPIO::ID		GPIO_PHB;
-		PWM::ID			GPIO_ENA;
-		PWM::ID			GPIO_ENB;
-		uint32_t		CURRENT_COEF;	//current coef for pwm (0 to 100%)
+		Drv8813Mode_t			MODE;
+		uint32_t				USTEP_MODE;
+		uint32_t				PWM_FREQ;
+		uint32_t				NB_MOTOR_STEP;
+		enum HAL::GPIO::ID		GPIO_DECAY;
+		enum HAL::GPIO::ID		GPIO_RESET;
+		enum HAL::GPIO::ID		GPIO_SLEEP;
+		enum HAL::GPIO::ID		GPIO_FAULT;
+		enum HAL::GPIO::ID		GPIO_PHA;
+		enum HAL::GPIO::ID		GPIO_PHB;
+		enum HAL::PWM::ID		GPIO_ENA;
+		enum HAL::PWM::ID		GPIO_ENB;
+		uint32_t				CURRENT_COEF;	//current coef for pwm (0 to 100%)
 }DRV8813_DEF;
 
 /**
@@ -81,18 +90,12 @@ typedef struct
 	GPIO*				PHB;
 	PWM*				ENA;
 	PWM*				ENB;
-}DRV8813_GPIO_INST
-
+}DRV8813_GPIO_INST;
 
 /*----------------------------------------------------------------------------*/
 /* Class declaration	                                                      */
 /*----------------------------------------------------------------------------*/
 
-/**
- * @namespace HAL
- */
-namespace HAL
-{
 	/**
 	 * @class Drv8813
 	 * @brief Drv8813 Abstraction Class
@@ -179,22 +182,13 @@ namespace HAL
 		 * @private
 		 * @brief timer source for tick stepper
 		 */
-		static Timer tim;
+		Timer* tim;
 		
-	private:
-
-		/**
-			 * @private
-			 * @brief pulse number to execute
-			 */
-		uint32_t nb_pulse
-
 		/**
 		 * @private
-		 * @brief Drv8813 constructor
-		 * @param id : Drv8813 identifier
+		 * @brief Drv8813 GPIO instances
 		 */
-		Drv8813 (enum ID id);
+		DRV8813_GPIO_INST GpioInst;
 
 		/**
 		 * @private
@@ -207,12 +201,6 @@ namespace HAL
 		 * @brief Drv8813 definitions
 		 */
 		DRV8813_DEF def;
-
-		/**
-		 * @private
-		 * @brief Drv8813 GPIO instances
-		 */
-		DRV8813_GPIO_INST GpioInst;
 
 		/**
 		 * @private
@@ -260,7 +248,16 @@ namespace HAL
 		 * @private
 		 * @brief run rotation motor
 		 */
-		uint32_t run;
+		bool run;
+
+private:
+
+		/**
+		 * @private
+		 * @brief Drv8813 constructor
+		 * @param id : Drv8813 identifier
+		 */
+		Drv8813 (enum ID id);
 
 	};
 }

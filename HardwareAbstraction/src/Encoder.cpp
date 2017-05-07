@@ -16,29 +16,29 @@ using namespace HAL;
 /*----------------------------------------------------------------------------*/
 
 // TIM5_CH1/CH2
-#define ENC0_CH_A_PORT			(GPIOH)
-#define ENC0_CH_A_PIN			(GPIO_Pin_10)
-#define ENC0_CH_A_PINSOURCE		(GPIO_PinSource10)
-#define ENC0_CH_B_PORT			(GPIOH)
-#define ENC0_CH_B_PIN			(GPIO_Pin_11)
-#define ENC0_CH_B_PINSOURCE		(GPIO_PinSource11)
+#define ENC0_CH_A_PORT			(GPIOA)
+#define ENC0_CH_A_PIN			(GPIO_Pin_0)
+#define ENC0_CH_A_PINSOURCE		(GPIO_PinSource0)
+#define ENC0_CH_B_PORT			(GPIOA)
+#define ENC0_CH_B_PIN			(GPIO_Pin_1)
+#define ENC0_CH_B_PINSOURCE		(GPIO_PinSource1)
 #define ENC0_IO_AF				(GPIO_AF_TIM5)
 #define ENC0_RELOAD_VALUE		(4095)			// Number of steps per encoder turn minus one
 #define ENC0_TIMER				(TIM5)
 #define ENC0_INT_CHANNEL		(TIM5_IRQn)
 #define ENC0_INT_PRIORITY		(0u)
 
-// TIM8_CH1/CH2
-#define ENC1_CH_A_PORT			(GPIOI)
-#define ENC1_CH_A_PIN			(GPIO_Pin_5)
-#define ENC1_CH_A_PINSOURCE		(GPIO_PinSource5)
-#define ENC1_CH_B_PORT			(GPIOI)
-#define ENC1_CH_B_PIN			(GPIO_Pin_6)
-#define ENC1_CH_B_PINSOURCE		(GPIO_PinSource6)
-#define ENC1_IO_AF				(GPIO_AF_TIM8)
+// TIM2_CH1/CH2
+#define ENC1_CH_A_PORT			(GPIOA)
+#define ENC1_CH_A_PIN			(GPIO_Pin_15)
+#define ENC1_CH_A_PINSOURCE		(GPIO_PinSource15)
+#define ENC1_CH_B_PORT			(GPIOB)
+#define ENC1_CH_B_PIN			(GPIO_Pin_9)
+#define ENC1_CH_B_PINSOURCE		(GPIO_PinSource9)
+#define ENC1_IO_AF				(GPIO_AF_TIM2)
 #define ENC1_RELOAD_VALUE		(4095)			// Number of steps per encoder turn minus one
-#define ENC1_TIMER				(TIM8)
-#define ENC1_INT_CHANNEL		(TIM8_UP_TIM13_IRQn)
+#define ENC1_TIMER				(TIM2)
+#define ENC1_INT_CHANNEL		(TIM2_IRQn)
 #define ENC1_INT_PRIORITY		(0u)
 
 #define TIM_FLAG_OVERFLOW		(1u << 0u)

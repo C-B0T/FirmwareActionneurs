@@ -24,7 +24,7 @@ using namespace HAL;
 #define PWM0_DUTYCYCLE		(0.5f)
 #define PWM0_TIMER			(TIM1)
 #define PWM0_TIMER_CHANNEL	(TIM_Channel_1)
-#define PWM0_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB2 clock
+#define PWM0_TIMER_FREQ		(SystemCoreClock)	// TIM2 clock is derivated from APB2 clock
 
 // TIM1_CH2
 #define PWM1_IO_PORT		(GPIOE)
@@ -35,7 +35,7 @@ using namespace HAL;
 #define PWM1_DUTYCYCLE		(0.5f)
 #define PWM1_TIMER			(TIM1)
 #define PWM1_TIMER_CHANNEL	(TIM_Channel_2)
-#define PWM1_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB2 clock
+#define PWM1_TIMER_FREQ		(SystemCoreClock)	// TIM2 clock is derivated from APB2 clock
 
 // TIM1_CH3
 #define PWM2_IO_PORT		(GPIOE)
@@ -46,7 +46,7 @@ using namespace HAL;
 #define PWM2_DUTYCYCLE		(0.5f)
 #define PWM2_TIMER			(TIM1)
 #define PWM2_TIMER_CHANNEL	(TIM_Channel_3)
-#define PWM2_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB2 clock
+#define PWM2_TIMER_FREQ		(SystemCoreClock)	// TIM2 clock is derivated from APB2 clock
 
 // TIM1_CH4
 #define PWM3_IO_PORT		(GPIOE)
@@ -57,11 +57,11 @@ using namespace HAL;
 #define PWM3_DUTYCYCLE		(0.5f)
 #define PWM3_TIMER			(TIM1)
 #define PWM3_TIMER_CHANNEL	(TIM_Channel_4)
-#define PWM3_TIMER_FREQ		(SystemCoreClock / 2)	// TIM2 clock is derivated from APB2 clock
+#define PWM3_TIMER_FREQ		(SystemCoreClock)	// TIM2 clock is derivated from APB2 clock
 
 // TIM2_CH1
 #define PWM4_IO_PORT		(GPIOA)
-#define PWM4_IO_PIN			(GPIO_Pin_15
+#define PWM4_IO_PIN			(GPIO_Pin_15)
 #define PWM4_IO_PINSOURCE	(GPIO_PinSource15)
 #define PWM4_IO_AF			(GPIO_AF_TIM2)
 #define PWM4_FREQ			(100000u)
@@ -72,8 +72,8 @@ using namespace HAL;
 
 // TIM2_CH2
 #define PWM5_IO_PORT		(GPIOB)
-#define PWM5_IO_PIN			(GPIO_Pin_3)
-#define PWM5_IO_PINSOURCE	(GPIO_PinSource3)
+#define PWM5_IO_PIN			(GPIO_Pin_9)
+#define PWM5_IO_PINSOURCE	(GPIO_PinSource9)
 #define PWM5_IO_AF			(GPIO_AF_TIM2)
 #define PWM5_FREQ			(100000u)
 #define PWM5_DUTYCYCLE		(0.5f)
@@ -244,7 +244,7 @@ using namespace HAL;
 #define PWM20_DUTYCYCLE		(0.5f)
 #define PWM20_TIMER			(TIM9)
 #define PWM20_TIMER_CHANNEL	(TIM_Channel_1)
-#define PWM20_TIMER_FREQ	(SystemCoreClock / 2)	// TIM2 clock is derivated from APB2 clock
+#define PWM20_TIMER_FREQ	(SystemCoreClock)	// TIM2 clock is derivated from APB2 clock
 
 // TIM9_CH2
 #define PWM21_IO_PORT		(GPIOE)
@@ -255,7 +255,7 @@ using namespace HAL;
 #define PWM21_DUTYCYCLE		(0.5f)
 #define PWM21_TIMER			(TIM9)
 #define PWM21_TIMER_CHANNEL	(TIM_Channel_2)
-#define PWM21_TIMER_FREQ	(SystemCoreClock / 2)	// TIM2 clock is derivated from APB2 clock
+#define PWM21_TIMER_FREQ	(SystemCoreClock)	// TIM2 clock is derivated from APB2 clock
 
 // TIM10_CH1
 #define PWM22_IO_PORT		(GPIOF)
@@ -266,7 +266,7 @@ using namespace HAL;
 #define PWM22_DUTYCYCLE		(0.5f)
 #define PWM22_TIMER			(TIM10)
 #define PWM22_TIMER_CHANNEL	(TIM_Channel_1)
-#define PWM22_TIMER_FREQ	(SystemCoreClock / 2)	// TIM2 clock is derivated from APB2 clock
+#define PWM22_TIMER_FREQ	(SystemCoreClock)	// TIM2 clock is derivated from APB2 clock
 
 // TIM11_CH1
 #define PWM23_IO_PORT		(GPIOF)
@@ -277,7 +277,7 @@ using namespace HAL;
 #define PWM23_DUTYCYCLE		(0.5f)
 #define PWM23_TIMER			(TIM11)
 #define PWM23_TIMER_CHANNEL	(TIM_Channel_1)
-#define PWM23_TIMER_FREQ	(SystemCoreClock / 2)	// TIM2 clock is derivated from APB2 clock
+#define PWM23_TIMER_FREQ	(SystemCoreClock)	// TIM2 clock is derivated from APB2 clock
 
 // TIM12_CH1
 #define PWM24_IO_PORT		(GPIOB)
@@ -767,7 +767,7 @@ namespace HAL
 		}
 
 		// 1. Get ARRx and CCRx value
-		ARR = (PWM0_TIMER_FREQ / this->frequency) - 1u;
+		ARR = (def.TIMER.CLOCKFREQ / this->frequency) - 1u;
 		CCR = (uint32_t)((float32_t)ARR * percent);
 
 		// 2. Update ARRx register
@@ -787,7 +787,7 @@ namespace HAL
 		assert(freq > 0u);
 
 		// 1. Get ARRx and CCRx value
-		ARR = (PWM0_TIMER_FREQ / freq) - 1u;
+		ARR = (def.TIMER.CLOCKFREQ / freq) - 1u;
 		CCR = (uint32_t)((float32_t)ARR * this->dutyCycle);
 
 		// 2. Update ARRx register
@@ -809,10 +809,12 @@ namespace HAL
 		if(state == PWM::ENABLED)
 		{
 			TIM_Cmd(this->def.TIMER.TIMER, ENABLE);
+			TIM_CtrlPWMOutputs(def.TIMER.TIMER,ENABLE);
 		}
 		else
 		{
 			TIM_Cmd(this->def.TIMER.TIMER, DISABLE);
+			TIM_CtrlPWMOutputs(def.TIMER.TIMER,DISABLE);
 		}
 
 		// 3. Update instance state

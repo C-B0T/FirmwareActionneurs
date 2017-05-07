@@ -42,7 +42,7 @@ extern "C" void hard_fault_handler_c(unsigned int * hardfault_args)
       stacked_pc = ((unsigned long) hardfault_args[6]);
       stacked_psr = ((unsigned long) hardfault_args[7]);
 
-      printf ("\r\n\r\n[Hard fault handler - all numbers in hex]\r\n");
+      /*printf ("\r\n\r\n[Hard fault handler - all numbers in hex]\r\n");
       printf ("R0 = %x\r\n", stacked_r0);
       printf ("R1 = %x\r\n", stacked_r1);
       printf ("R2 = %x\r\n", stacked_r2);
@@ -56,7 +56,7 @@ extern "C" void hard_fault_handler_c(unsigned int * hardfault_args)
       printf ("HFSR = %x\r\n", (*((volatile unsigned long *)(0xE000ED2C))));
       printf ("DFSR = %x\r\n", (*((volatile unsigned long *)(0xE000ED30))));
       printf ("AFSR = %x\r\n", (*((volatile unsigned long *)(0xE000ED3C))));
-      printf ("SCB_SHCSR = %x\r\n", SCB->SHCSR);
+      printf ("SCB_SHCSR = %x\r\n", SCB->SHCSR);*/
 
       while (1);
 }
@@ -107,7 +107,7 @@ static void HardwareInit (void)
     // Enable Timer clock
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2 | RCC_APB1Periph_TIM5 | RCC_APB1Periph_TIM7,
                            ENABLE);
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM8,
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1 | RCC_APB2Periph_TIM8 | RCC_APB2Periph_SPI1,
                            ENABLE);
 
     // Enable USART Clock
@@ -129,14 +129,17 @@ void TestEvent (void * obj)
 void TASKHANDLER_Test (void * obj)
 {
     TickType_t xLastWakeTime;
-    const TickType_t xFrequency = pdMS_TO_TICKS(100);
+    const TickType_t xFrequency = pdMS_TO_TICKS(250);
 
     // Get instances
     GPIO *led1 = GPIO::GetInstance(GPIO::GPIO0);
+    GPIO *led2 = GPIO::GetInstance(GPIO::GPIO1);
+    GPIO *led3 = GPIO::GetInstance(GPIO::GPIO2);
+    //GPIO *led4 = GPIO::GetInstance(GPIO::GPIO3);
 
-    Timer *Tim7 = Timer::GetInstance (Timer::TIMER7);
-    Tim7->TimerElapsed += TestEvent;
-    Tim7->Start();
+    //Timer *Tim7 = Timer::GetInstance (Timer::TIMER7);
+    //Tim7->TimerElapsed += TestEvent;
+    //Tim7->Start();
 
     xLastWakeTime = xTaskGetTickCount();
 
@@ -144,6 +147,9 @@ void TASKHANDLER_Test (void * obj)
     {
         vTaskDelayUntil(&xLastWakeTime, xFrequency);
         led1->Toggle();
+        led2->Toggle();
+        led3->Toggle();
+        //led4->Toggle();
     }
 }
 
@@ -158,6 +164,22 @@ int main(void)
     // Start (Led init and set up led1)
     GPIO *led1 = GPIO::GetInstance(GPIO::GPIO0);
     led1->Set(GPIO::State::Low);
+
+    //Set External DAC
+    ExtDAC* dac = ExtDAC::GetInstance(ExtDAC::EXTDAC0);
+    dac->SetOutputValue(ExtDAC::ExtDAC_Channel0,200u);
+
+    //Set DRV8813
+    /*Drv8813* drv1 = Drv8813::GetInstance(Drv8813::DRV8813_1);
+    drv1->SetDirection(Drv8813State_t::FORWARD);
+    drv1->SetSpeed(1000u);
+    drv1->Start();*/
+
+    PWM* pwm = PWM::GetInstance(PWM::PWM1);
+    pwm->SetFrequency(100000u);
+    pwm->SetDutyCycle(0.5f);
+    pwm->SetState(PWM::State::ENABLED);
+
 
     // Serial init
     //Serial *serial0 = Serial::GetInstance(Serial::SERIAL0);
@@ -189,7 +211,7 @@ int main(void)
  */
 void assert_failed(uint8_t* file, uint32_t line)
 {
-    printf(ASSERT_FAILED_MESSSAGE, file, line);
+    //printf(ASSERT_FAILED_MESSSAGE, file, line);
 
     while(1)
     {
