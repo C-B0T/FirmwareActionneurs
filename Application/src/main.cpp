@@ -15,6 +15,8 @@
 
 #include "HAL.hpp"
 
+#include "Diag.hpp"
+
 #include "../../STM32_Driver/inc/stm32f4xx_it.h"
 
 using namespace HAL;
@@ -132,10 +134,7 @@ void TASKHANDLER_Test (void * obj)
     const TickType_t xFrequency = pdMS_TO_TICKS(250);
 
     // Get instances
-    GPIO *led1 = GPIO::GetInstance(GPIO::GPIO0);
-    GPIO *led2 = GPIO::GetInstance(GPIO::GPIO1);
-    GPIO *led3 = GPIO::GetInstance(GPIO::GPIO2);
-    //GPIO *led4 = GPIO::GetInstance(GPIO::GPIO3);
+    //HAL::GPIO *led1 = HAL::GPIO::GetInstance(HAL::GPIO::GPIO6);
 
     //Timer *Tim7 = Timer::GetInstance (Timer::TIMER7);
     //Tim7->TimerElapsed += TestEvent;
@@ -146,10 +145,7 @@ void TASKHANDLER_Test (void * obj)
     while(1)
     {
         vTaskDelayUntil(&xLastWakeTime, xFrequency);
-        led1->Toggle();
-        led2->Toggle();
-        led3->Toggle();
-        //led4->Toggle();
+        //led1->Toggle();
     }
 }
 
@@ -164,6 +160,8 @@ int main(void)
     // Start (Led init and set up led1)
     GPIO *led1 = GPIO::GetInstance(GPIO::GPIO0);
     led1->Set(GPIO::State::Low);
+
+    Diag *diag = Diag::GetInstance();
 
     //Set External DAC
     ExtDAC* dac = ExtDAC::GetInstance(ExtDAC::EXTDAC0);
