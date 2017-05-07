@@ -22,7 +22,7 @@ using namespace Utils;
 #define TIMER7_TIMER			(TIM7)
 #define TIMER7_PERIOD_US		(250000u)
 #define TIMER7_FREQUENCY		(1000000/TIMER7_PERIOD_US)
-#define TIMER7_TIMER_FREQ		(SystemCoreClock)	// TIM7 clock is derivated from APB1 clock
+#define TIMER7_TIMER_FREQ		(SystemCoreClock / 2)	// TIM7 clock is derivated from APB1 clock
 #define TIMER7_INT_CHANNEL		(TIM7_IRQn)
 #define TIMER7_INT_PRIORITY		(0u)
 

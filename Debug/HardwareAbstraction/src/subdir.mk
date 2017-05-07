@@ -4,23 +4,32 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
+../HardwareAbstraction/src/DRV8813.cpp \
 ../HardwareAbstraction/src/Encoder.cpp \
+../HardwareAbstraction/src/ExtDAC.cpp \
 ../HardwareAbstraction/src/GPIO.cpp \
 ../HardwareAbstraction/src/PWM.cpp \
+../HardwareAbstraction/src/SPIMaster.cpp \
 ../HardwareAbstraction/src/Serial.cpp \
 ../HardwareAbstraction/src/Timer.cpp 
 
 OBJS += \
+./HardwareAbstraction/src/DRV8813.o \
 ./HardwareAbstraction/src/Encoder.o \
+./HardwareAbstraction/src/ExtDAC.o \
 ./HardwareAbstraction/src/GPIO.o \
 ./HardwareAbstraction/src/PWM.o \
+./HardwareAbstraction/src/SPIMaster.o \
 ./HardwareAbstraction/src/Serial.o \
 ./HardwareAbstraction/src/Timer.o 
 
 CPP_DEPS += \
+./HardwareAbstraction/src/DRV8813.d \
 ./HardwareAbstraction/src/Encoder.d \
+./HardwareAbstraction/src/ExtDAC.d \
 ./HardwareAbstraction/src/GPIO.d \
 ./HardwareAbstraction/src/PWM.d \
+./HardwareAbstraction/src/SPIMaster.d \
 ./HardwareAbstraction/src/Serial.d \
 ./HardwareAbstraction/src/Timer.d 
 

@@ -136,7 +136,7 @@ static void _hardwareInit (enum HAL::SPIMaster::ID id)
 	SPIStruct.SPI_NSS				=	SPI_NSS_Soft;
 	SPIStruct.SPI_BaudRatePrescaler	=	spi.SPI.CLOCKPRESCALER;
 	SPIStruct.SPI_FirstBit			=	SPI_FirstBit_MSB;
-	SPIStruct.SPI_CRCPolynomial		=	0x0000u;
+	SPIStruct.SPI_CRCPolynomial		=	0x0001u;
 
 	SPI_Init(spi.SPI.BUS, &SPIStruct);
 	SPI_Cmd(spi.SPI.BUS, ENABLE);

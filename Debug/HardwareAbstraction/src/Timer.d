@@ -43,13 +43,7 @@ HardwareAbstraction/src/Timer.o: ../HardwareAbstraction/src/Timer.cpp \
  C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/Application/inc/common.h \
  C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/Utils/inc/Observable.hpp \
  C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/Utils/inc/Event.hpp \
- C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/Utils/inc/Observable.hpp \
- C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/HardwareAbstraction/inc/HAL.hpp \
- C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/HardwareAbstraction/inc/GPIO.hpp \
- C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/HardwareAbstraction/inc/PWM.hpp \
- C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/HardwareAbstraction/inc/Serial.hpp \
- C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/HardwareAbstraction/inc/Encoder.hpp \
- C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/HardwareAbstraction/inc/Timer.hpp
+ C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/Utils/inc/Observable.hpp
 
 C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/HardwareAbstraction/inc/Timer.hpp:
 
@@ -140,15 +134,3 @@ C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/Utils/inc/Observable.hpp:
 C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/Utils/inc/Event.hpp:
 
 C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/Utils/inc/Observable.hpp:
-
-C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/HardwareAbstraction/inc/HAL.hpp:
-
-C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/HardwareAbstraction/inc/GPIO.hpp:
-
-C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/HardwareAbstraction/inc/PWM.hpp:
-
-C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/HardwareAbstraction/inc/Serial.hpp:
-
-C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/HardwareAbstraction/inc/Encoder.hpp:
-
-C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/HardwareAbstraction/inc/Timer.hpp:

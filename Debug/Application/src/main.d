@@ -59,6 +59,9 @@ Application/src/main.o: ../Application/src/main.cpp \
  C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/HardwareAbstraction/inc/Encoder.hpp \
  C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/HardwareAbstraction/inc/Timer.hpp \
  C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/Utils/inc/Observable.hpp \
+ C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/HardwareAbstraction/inc/SPIMaster.hpp \
+ C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/HardwareAbstraction/inc/ExtDAC.hpp \
+ C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/HardwareAbstraction/inc/DRV8813.hpp \
  ../Application/src/../../STM32_Driver/inc/stm32f4xx_it.h \
  ../Application/src/../../STM32_Driver/inc/../../STM32_Driver/inc/stm32f4xx.h
 
@@ -181,6 +184,12 @@ C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/HardwareAbstraction/inc/Encod
 C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/HardwareAbstraction/inc/Timer.hpp:
 
 C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/Utils/inc/Observable.hpp:
+
+C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/HardwareAbstraction/inc/SPIMaster.hpp:
+
+C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/HardwareAbstraction/inc/ExtDAC.hpp:
+
+C:/Users/Bureau/STM32Workspace/FirmwareActionneurs/HardwareAbstraction/inc/DRV8813.hpp:
 
 ../Application/src/../../STM32_Driver/inc/stm32f4xx_it.h:
 
