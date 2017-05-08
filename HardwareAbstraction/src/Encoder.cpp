@@ -263,15 +263,15 @@ extern "C"
 	/**
 	 * @brief Encoder 1 interrupt handler
 	 */
-	void TIM8_UP_TIM13_IRQHandler (void)
+	void TIM2_IRQHandler (void)
 	{
 		uint16_t flag = 0u;
 
-		if(TIM_GetFlagStatus(TIM8, TIM_FLAG_Update) == SET)
+		if(TIM_GetFlagStatus(TIM2, TIM_FLAG_Update) == SET)
 		{
-			flag = TIM_GetCounterDirection(TIM8);
+			flag = TIM_GetCounterDirection(TIM2);
 
-			TIM_ClearFlag(TIM8, TIM_FLAG_Update);
+			TIM_ClearFlag(TIM2, TIM_FLAG_Update);
 
 			if(_enc[Encoder::ENCODER1] != NULL)
 			{

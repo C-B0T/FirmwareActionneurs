@@ -11,12 +11,12 @@
 
 using namespace HAL;
 
-#define TARGET_NUCLEO	1
+//#define TARGET_NUCLEO
 
 /*----------------------------------------------------------------------------*/
 /* Definitions                                                                */
 /*----------------------------------------------------------------------------*/
-#if TARGET_NUCLEO==1
+#ifdef TARGET_NUCLEO
 
 // LED1
 #define GPIO0_PORT				(GPIOB)

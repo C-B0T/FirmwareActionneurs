@@ -29,7 +29,7 @@ using namespace HAL;
 // TIM1_CH2
 #define PWM1_IO_PORT		(GPIOE)
 #define PWM1_IO_PIN			(GPIO_Pin_11)
-#define PWM1_IO_PINSOURCE	(GPIO_PinSource1)
+#define PWM1_IO_PINSOURCE	(GPIO_PinSource11)
 #define PWM1_IO_AF			(GPIO_AF_TIM1)
 #define PWM1_FREQ			(100000u)
 #define PWM1_DUTYCYCLE		(0.5f)
