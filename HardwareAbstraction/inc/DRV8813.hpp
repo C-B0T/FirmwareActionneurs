@@ -133,7 +133,21 @@ typedef struct
 		 * @param speed: in step/s
 		 * @return 0 if OK, else speed is out of range
 		 */
-		uint32_t SetSpeed (uint32_t speed);
+		uint32_t SetSpeedStep (uint32_t speed);
+
+		/**
+		 * @brief Set speed
+		 * @param speed: in RPS
+		 * @return 0 if OK, else speed is out of range
+		 */
+		uint32_t SetSpeedRPS (float32_t speed);
+
+		/**
+		 * @brief Set speed
+		 * @param speed: in RPM
+		 * @return 0 if OK, else speed is out of range
+		 */
+		uint32_t SetSpeedRPM (float32_t speed);
 
 		/**
 		 * @brief Set direction
@@ -169,6 +183,12 @@ typedef struct
 		 * @return 0 if OK, else position is out of range
 		*/
 		uint32_t SetPosition (uint32_t pos);
+
+		/**
+		 * @brief read position in step
+		 * @return position in step
+		 */
+		bool IsMoving (void);
 
 		/**
 		 * @brief Return Drv8813 identifier

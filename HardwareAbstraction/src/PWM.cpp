@@ -809,12 +809,14 @@ namespace HAL
 		if(state == PWM::ENABLED)
 		{
 			TIM_Cmd(this->def.TIMER.TIMER, ENABLE);
-			TIM_CtrlPWMOutputs(def.TIMER.TIMER,ENABLE);
+			if(def.TIMER.TIMER == TIM1 || def.TIMER.TIMER == TIM8)
+				TIM_CtrlPWMOutputs(def.TIMER.TIMER,ENABLE);
 		}
 		else
 		{
 			TIM_Cmd(this->def.TIMER.TIMER, DISABLE);
-			TIM_CtrlPWMOutputs(def.TIMER.TIMER,DISABLE);
+			if(def.TIMER.TIMER == TIM1 || def.TIMER.TIMER == TIM8)
+				TIM_CtrlPWMOutputs(def.TIMER.TIMER,DISABLE);
 		}
 
 		// 3. Update instance state

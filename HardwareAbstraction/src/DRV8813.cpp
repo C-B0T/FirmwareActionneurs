@@ -16,7 +16,7 @@ using namespace HAL;
 /*----------------------------------------------------------------------------*/
 #define STEPPER_FREQ_PWM	(10000u)			//10kHz
 #define DC_FREQ_PWM			(10000u)			//10kHz
-#define FREQ_TICK_REF		(4000u)				//1kHz
+#define FREQ_TICK_REF		(4000u)				//4kHz
 #define TIMER_TICK_REF		Timer::TIMER7		//Warning: common to Servo Driver
 
 #define USTEP_1		16
@@ -126,8 +126,8 @@ static DRV8813_DEF _getDrv8813Struct (enum Drv8813::ID id)
 		break;
 	case HAL::Drv8813::DRV8813_2:
 		drv.MODE				=	Drv8813Mode::STEPPER_MODE;
-		drv.USTEP_MODE			= 	USTEP_4;
-		drv.CURRENT_COEF		=	25u;
+		drv.USTEP_MODE			= 	USTEP_1;
+		drv.CURRENT_COEF		=	100u;
 		drv.PWM_FREQ			=	STEPPER_FREQ_PWM;
 		drv.NB_MOTOR_STEP		=	200u;
 		drv.GPIO_DECAY			=	DRV_GPIO_DECAY;
@@ -142,7 +142,7 @@ static DRV8813_DEF _getDrv8813Struct (enum Drv8813::ID id)
 	case HAL::Drv8813::DRV8813_3:
 		drv.MODE				=	Drv8813Mode::STEPPER_MODE;
 		drv.USTEP_MODE			= 	USTEP_1;
-		drv.CURRENT_COEF		=	25u;
+		drv.CURRENT_COEF		=	100u;
 		drv.PWM_FREQ			=	STEPPER_FREQ_PWM;
 		drv.NB_MOTOR_STEP		=	200u;
 		drv.GPIO_DECAY			=	DRV_GPIO_DECAY;
@@ -157,7 +157,7 @@ static DRV8813_DEF _getDrv8813Struct (enum Drv8813::ID id)
 	case HAL::Drv8813::DRV8813_4:
 		drv.MODE				=	Drv8813Mode::STEPPER_MODE;
 		drv.USTEP_MODE			= 	USTEP_1;
-		drv.CURRENT_COEF		=	25u;
+		drv.CURRENT_COEF		=	100u;
 		drv.PWM_FREQ			=	STEPPER_FREQ_PWM;
 		drv.NB_MOTOR_STEP		=	200u;
 		drv.GPIO_DECAY			=	DRV_GPIO_DECAY;
@@ -172,7 +172,7 @@ static DRV8813_DEF _getDrv8813Struct (enum Drv8813::ID id)
 	case HAL::Drv8813::DRV8813_5:
 		drv.MODE				=	Drv8813Mode::STEPPER_MODE;
 		drv.USTEP_MODE			= 	USTEP_1;
-		drv.CURRENT_COEF		=	25u;
+		drv.CURRENT_COEF		=	100u;
 		drv.PWM_FREQ			=	STEPPER_FREQ_PWM;
 		drv.NB_MOTOR_STEP		=	200u;
 		drv.GPIO_DECAY			=	DRV_GPIO_DECAY;
@@ -196,6 +196,9 @@ static DRV8813_DEF _getDrv8813Struct (enum Drv8813::ID id)
  */
 static void ManageStepper (Drv8813* drv)
 {
+	static uint32_t pwmA;
+	static uint32_t pwmB;
+
 	if(drv->direction==DISABLED)
 	{
 		drv->GpioInst.ENA->SetDutyCycle(0);
@@ -203,17 +206,25 @@ static void ManageStepper (Drv8813* drv)
 	}
 	else
 	{
-		uint32_t pwmA = STEP_DEF_16[drv->stepIndex].PWM_A;	//current index PWM
+		pwmA = STEP_DEF_16[drv->stepIndex].PWM_A;	//current index PWM
 		pwmA *= drv->def.CURRENT_COEF;
 		pwmA /= 100u;
 
-		uint32_t pwmB = STEP_DEF_16[drv->stepIndex].PWM_B;	//current index PWM
+		pwmB = STEP_DEF_16[drv->stepIndex].PWM_B;	//current index PWM
 		pwmB *= drv->def.CURRENT_COEF;
 		pwmB /= 100u;
 
 		//////// TO DELETE, RESOLVE TORQUE PB ONLY ///////
-		if(pwmA==71) pwmA+=FREQ_TICK_REF/drv->period_tick*100;
-		if(pwmB==71) pwmB=100;
+		/*if(drv->period_tick>(FREQ_TICK_REF/100u))
+		{
+			if(pwmA>0) pwmA=45;
+			if(pwmB>0) pwmB=45;
+		}*/
+		if(drv->period_tick<(FREQ_TICK_REF/500u))
+		{
+			if(pwmA>0) pwmA=100;
+			if(pwmB>0) pwmB=100;
+		}
 
 		//Set phase and PWM
 		if(STEP_DEF_16[drv->stepIndex].PositivA)
@@ -236,14 +247,16 @@ static void ManageStepper (Drv8813* drv)
 static void TickDrv8813Event (void * obj)
 {
 	static uint32_t CptStep=0;
-	for (uint32_t i =0; i<Drv8813::ID::DRV8813_MAX; i++)
+	static uint32_t i=0;
+
+	for (i =0; i<Drv8813::ID::DRV8813_MAX; i++)
 	{
 		Drv8813* drv = _drv8813[i];
 		if(drv != NULL && drv->def.MODE==Drv8813Mode_t::STEPPER_MODE)	//if activ module and stepper mode
 		{
 			if((drv->nb_pulse!=0 or drv->run) && drv->direction!=DISABLED)
 			{
-				if((CptStep % drv->period_tick) == 0)
+				if(drv->period_tick != 0 && (CptStep % drv->period_tick) == 0)
 				{
 					if(drv->direction == Drv8813State_t::FORWARD)				//forward 1 step
 					{
@@ -262,7 +275,7 @@ static void TickDrv8813Event (void * obj)
 						drv->stepIndex -= drv->def.USTEP_MODE;
 
 						if(drv->position == 0)
-							drv->def.NB_MOTOR_STEP=0;
+							drv->position=drv->def.NB_MOTOR_STEP;
 						drv->position -= 1;
 					}
 
@@ -276,8 +289,8 @@ static void TickDrv8813Event (void * obj)
 	}
 
 	CptStep++;
-	if(CptStep>=FREQ_TICK_REF)
-		CptStep=0;
+	//if(CptStep>=FREQ_TICK_REF)
+	//	CptStep=0;
 }
 
 /**
@@ -360,21 +373,62 @@ namespace HAL
 		//_hardwareInit(id);
 	}
 
-	uint32_t Drv8813::SetSpeed (uint32_t speed)
+	uint32_t Drv8813::SetSpeedStep (uint32_t speed)
 	{
 		if(speed>FREQ_TICK_REF)		// Speed out of range
 			return ERROR_GENERAL;
 	
 		if(speed==0)
+			this->period_tick = 0;
+		else
+			this->period_tick = FREQ_TICK_REF/speed;
+		return 0;
+	}
+
+	uint32_t Drv8813::SetSpeedRPM (float32_t speed)
+	{
+		return this->SetSpeedRPS(speed/60.0);
+	}
+
+	uint32_t Drv8813::SetSpeedRPS (float32_t speed)
+	{
+		speed = speed * (float32_t)this->def.NB_MOTOR_STEP;
+
+		if(this->def.USTEP_MODE == USTEP_2)
+			speed = speed * 2u;
+		if(this->def.USTEP_MODE == USTEP_4)
+					speed = speed * 4u;
+		if(this->def.USTEP_MODE == USTEP_8)
+					speed = speed * 8u;
+		if(this->def.USTEP_MODE == USTEP_16)
+					speed = speed * 16u;
+
+		if(abs(speed)>FREQ_TICK_REF)		// Speed out of range
 			return ERROR_GENERAL;
 
-		this->period_tick = FREQ_TICK_REF/speed;
+
+		if(speed>0)
+		{
+			this->period_tick = FREQ_TICK_REF/abs(speed);
+			SetDirection(Drv8813State_t::FORWARD);
+			this->Start();
+		}
+		else if(speed<0)
+		{
+			this->period_tick = FREQ_TICK_REF/abs(speed);
+			SetDirection(Drv8813State_t::BACKWARD);
+			this->Start();
+		}
+		else
+			this->Stop();
+
+
 		return 0;
 	}
 
 	void Drv8813::SetDirection (Drv8813State dir)
 	{
-		this->direction=direction;
+		this->direction=dir;
 	}
 
 	void Drv8813::Start (void)
@@ -409,5 +463,13 @@ namespace HAL
 
 		return 0;
 	}
+
+	bool Drv8813::IsMoving()
+		{
+			if((this->nb_pulse!=0 or this->run) && this->direction!=DISABLED)
+				return true;
+			else
+				return false;
+		}
 }
 

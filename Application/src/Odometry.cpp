@@ -270,8 +270,8 @@ namespace Location
 
         this->status |= (1<<0);
 
-        dl = +  leftEncoder->GetRelativeValue();
-        dr = - rightEncoder->GetRelativeValue();
+        dl = -  leftEncoder->GetRelativeValue();
+        dr = + rightEncoder->GetRelativeValue();
 
         dlf = static_cast<float32_t>(dl) * WC;
         drf = static_cast<float32_t>(dr);

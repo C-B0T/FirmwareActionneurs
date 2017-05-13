@@ -27,13 +27,13 @@ using namespace Location;
 #define _2_PI_      6.28318530717958647692  // 2*PI
 
 
-#define VC_MOTOR_LEFT               (Drv8813::ID::DRV8813_1)
-#define VC_MOTOR_RIGHT              (Drv8813::ID::DRV8813_2)
+#define VC_MOTOR_LEFT               (Drv8813::ID::DRV8813_4)
+#define VC_MOTOR_RIGHT              (Drv8813::ID::DRV8813_1)
 
 #define VC_TASK_STACK_SIZE          (256u)
 #define VC_TASK_PRIORITY            (configMAX_PRIORITIES-3)
 
-#define VC_TASK_PERIOD_MS           (5u)
+#define VC_TASK_PERIOD_MS           (100u)
 
 
 
@@ -103,12 +103,14 @@ namespace MotionControl
         this->status = 0x0000;
 
         // Init Angular velocity control
-        this->def = _getDefStructure(VelocityControlStepper::ANGULAR);
+        this->def1 = _getDefStructure(VelocityControlStepper::ANGULAR);
 
         this->odometry = Odometry::GetInstance();
 
-        this->leftMotor  = Drv8813::GetInstance(this->def.Motors.ID_left);
-        this->rightMotor = Drv8813::GetInstance(this->def.Motors.ID_right);
+        this->leftMotor  = Drv8813::GetInstance(this->def1.Motors.ID_left);
+        this->rightMotor = Drv8813::GetInstance(this->def1.Motors.ID_right);
+        //this->leftMotor  = Drv8813::GetInstance(Drv8813::DRV8813_4);
+        //this->rightMotor = Drv8813::GetInstance(Drv8813::DRV8813_1);
 
         this->angularVelocity = 0.0f;
         this->linearVelocity  = 0.0f;
@@ -171,13 +173,9 @@ namespace MotionControl
             speed_left  = speed_linear - (speed_angular * ADW_MM / 1000.0) / 2.0;
             speed_right = speed_linear + (speed_angular * ADW_MM / 1000.0) / 2.0;
 
-            // Convert robot speed (m/s) to motor speed (rad/s)
-            speed_left  /= RATIO * WD_MM * _PI_;
-            speed_right /= RATIO * WD_MM * _PI_;
-
-            // Convert motor speed (rad/s) to motor speed (rot/s or Hz)
-            speed_left  /= _2_PI_;
-            speed_right /= _2_PI_;
+            // Convert robot speed (m/s) to motor speed (rot/s)
+            speed_left  = speed_left*1000.0 / (WD_MM * _PI_) / RATIO;
+            speed_right = speed_right*1000.0 / (WD_MM * _PI_)/ RATIO;
 
             // Set speed to Motors
             this->leftSpeed  = -speed_left;
@@ -185,8 +183,10 @@ namespace MotionControl
 
             if(this->stop != true)
             {
-                //JRO leftMotor->SetMotorSpeed(this->leftSpeed);
-                //JRO rightMotor->SetMotorSpeed(this->rightSpeed);
+                this->leftMotor->SetSpeedRPS(this->leftSpeed);
+                this->rightMotor->SetSpeedRPS(this->rightSpeed);
+                //this->leftMotor->SetSpeedRPS(-2.0);
+                //this->rightMotor->SetSpeedRPS(2.0);
             }
         }
         else

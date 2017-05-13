@@ -240,7 +240,7 @@ namespace MotionControl
          * @protected
          * @brief Coef definitions
          */
-        VC_DEF def;
+        VC_DEF def1;
 
         /**
          * @protected
