@@ -285,6 +285,10 @@ static void TickDrv8813Event (void * obj)
 					ManageStepper(drv);		//manage IO pin and PWM function of step index
 				}
 			}
+			else if(drv->direction==DISABLED)
+			{
+				ManageStepper(drv);
+			}
 		}
 	}
 
