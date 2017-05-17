@@ -11,6 +11,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "Encoder.hpp"
+
 /*----------------------------------------------------------------------------*/
 /* Definitions                                                                */
 /*----------------------------------------------------------------------------*/
@@ -35,7 +37,7 @@ static Diag* _diag = NULL;
 
 Diag* Diag::GetInstance()
 {
-    // If VelocityControl instance already exists
+    // If ????? instance already exists
     if(_diag != NULL)
     {
         return _diag;
@@ -53,7 +55,7 @@ Diag::Diag()
     this->taskHandle = NULL;
 
     this->enable[0] = false;
-    this->enable[1] = true;//false;
+    this->enable[1] = false;
     this->enable[2] = false;
     this->enable[3] = false;
     this->enable[4] = false;
@@ -66,17 +68,16 @@ Diag::Diag()
                 DIAG_TASK_PRIORITY,
                 NULL);
 
-    this->odometry = Odometry::GetInstance();
-    /*JRO this->vc = VelocityControl::GetInstance();
-    this->pc = PositionControl::GetInstance();
-    this->pg = ProfileGenerator::GetInstance();
-    this->tp = TrajectoryPlanning::GetInstance();
-    this->mc = FBMotionControl::GetInstance();*/
+    this->odometry = Odometry::GetInstance(false);
+    this->pc = PositionControl::GetInstance(false);
+    this->pg = ProfileGenerator::GetInstance(false);
+    this->tp = TrajectoryPlanning::GetInstance(false);
+    this->mc = FBMotionControl::GetInstance();
 
-    this->led1 = GPIO::GetInstance(GPIO::GPIO6);
-    this->led2 = GPIO::GetInstance(GPIO::GPIO7);
-    this->led3 = GPIO::GetInstance(GPIO::GPIO8);
-    this->led4 = GPIO::GetInstance(GPIO::GPIO9);
+    this->led1 = GPIO::GetInstance(GPIO::GPIO0);
+    this->led2 = GPIO::GetInstance(GPIO::GPIO1);
+    this->led3 = GPIO::GetInstance(GPIO::GPIO2);
+    this->led4 = GPIO::GetInstance(GPIO::GPIO3);
 
 }
 
@@ -86,7 +87,13 @@ void Diag::TracesMC()
 
     this->odometry->GetRobot(&r);
 
-    /*JRO printf("%ld\t%ld\t%.3f\t%.3f\t%.3f\t%.3f\r\n", tp->GetStep(), pg->GetLinearPhase(), pg->GetLinearPositionProfiled(), pc->GetLinearPosition(), vc->GetLinearVelocity(), vc->GetLinearSpeed());*/
+    //printf("%ld\t%ld\t%.3f\t%.3f\t%.3f\t%.3f\r\n", tp->GetStep(), pg->GetLinearPhase(), pg->GetLinearPositionProfiled(), pc->GetLinearPosition(), pg->GetLinearVelocity(), pg->GetLinearSpeed());
+    //printf("%.3f\t%.3f\t%.3f\t%.3f\r\n", pc->GetLinearPosition(), pg->GetLinearVelocityProfiled(), odometry->GetLinearVelocity(), odometry->GetLinearPosition());
+    //printf("%.3f\t%.3f\t%.3f\t%.3f\r\n", pc->GetAngularPosition(), pg->GetAngularVelocity(), odometry->GetAngularVelocity(), odometry->GetAngularPosition());
+    //printf("%ld\t%ld\t%.3f\t%.3f\t%.3f\t%.3f\r\n", tp->GetStep(), pg->GetLinearPhase(), pc->GetAngularPosition(), pg->GetAngularVelocity(), odometry->GetAngularVelocity(), odometry->GetAngularPosition());
+    //printf("%.3f\t%.3f\r\n", odometry->GetAngularPosition(), odometry->GetAngularVelocity());
+    //printf("%.3f\t%.3f\t%.3f\t%.3f\r\n", odometry->GetLinearPosition(), odometry->GetLinearVelocity(), odometry->GetAngularPosition(), odometry->GetAngularVelocity());
+    printf("%.3f\t%.3f\t%.3f\t%.3f\r\n", odometry->GetLinearPosition(), odometry->GetLinearVelocity(), odometry->GetAngularPosition(), odometry->GetAngularVelocity());
 }
 
 void Diag::TracesOD()
@@ -136,7 +143,7 @@ void Diag::Led()
 	if((localTime % 500) == 0)
 	    this->led1->Toggle();   // Blinking alive
 
-	/*JRO status = this->mc->GetStatus();*/
+	status = this->mc->GetStatus();
 
     // Led2
 	if(status & (1<<8)) // Ready

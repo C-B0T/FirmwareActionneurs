@@ -1,12 +1,12 @@
 /**
- * @file    Diag.hpp
+ * @file    CLI.hpp
  * @author  Jeremy ROULLAND
- * @date    29 apr. 2017
- * @brief   Diag class
+ * @date    14 apr. 2017
+ * @brief   Command Line Interface class
  */
 
-#ifndef INC_DIAG_HPP_
-#define INC_DIAG_HPP_
+#ifndef INC_CLI_HPP_
+#define INC_CLI_HPP_
 
 
 #include "common.h"
@@ -21,8 +21,7 @@
 #include "ProfileGenerator.hpp"
 #include "PositionControlStepper.hpp"
 
-// LED
-#include "GPIO.hpp"
+#include "Diag.hpp"
 
 // FreeRTOS
 #include "FreeRTOS.h"
@@ -31,8 +30,7 @@
 #include "timers.h"
 
 using namespace Location;
-/*JRO using namespace MotionControl;*/
-using namespace HAL;
+using namespace MotionControl;
 
 /*----------------------------------------------------------------------------*/
 /* Definitions                                                                */
@@ -50,21 +48,21 @@ typedef void (*FunctionFunc)();
  */
 
     /**
-    * @class DIAG
+    * @class CLI
     * @brief
     *
     * HOWTO :
     *
     */
 
-    class Diag
+    class CLI
     {
     public:
         /**
          * @brief Get instance method
          * @return Diag instance
          */
-        static Diag* GetInstance();
+        static CLI* GetInstance();
 
         /**
          * @brief Diag instance name
@@ -74,16 +72,11 @@ typedef void (*FunctionFunc)();
             return this->name;
         }
 
-        void Toggle(uint16_t i = 0)
-        {
-        	this->enable[i] = ! this->enable[i];
-        }
-
     protected:
         /**
-         * @brief DIAG default constructor
+         * @brief CLI default constructor
          */
-        Diag();
+        CLI();
 
         /**
          * @protected
@@ -91,23 +84,16 @@ typedef void (*FunctionFunc)();
          */
         std::string name;
 
-        bool enable[5];
-
         Odometry           *odometry;
         PositionControl    *pc;
         ProfileGenerator   *pg;
         TrajectoryPlanning *tp;
         FBMotionControl    *mc;
 
-        GPIO *led1;
-        GPIO *led2;
-        GPIO *led3;
-        GPIO *led4;
+        Diag *diag;
 
 
-        void TracesMC();
-        void TracesOD();
-        void Led();
+        void Start();
 
         /**
          * @brief Compute traces spreading
@@ -130,4 +116,4 @@ typedef void (*FunctionFunc)();
 
     };
 
-#endif /* INC_DIAG_HPP_ */
+#endif /* INC_CLI_HPP_ */
