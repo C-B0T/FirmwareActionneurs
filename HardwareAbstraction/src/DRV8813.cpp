@@ -285,6 +285,10 @@ static void TickDrv8813Event (void * obj)
 					ManageStepper(drv);		//manage IO pin and PWM function of step index
 				}
 			}
+			else if(drv->direction==DISABLED)
+			{
+			    ManageStepper(drv);
+			}
 		}
 	}
 
@@ -377,7 +381,7 @@ namespace HAL
 	{
 		if(speed>FREQ_TICK_REF)		// Speed out of range
 			return ERROR_GENERAL;
-	
+
 		if(speed==0)
 			this->period_tick = 0;
 		else
@@ -434,12 +438,12 @@ namespace HAL
 	void Drv8813::Start (void)
 	{
 		this->run = true;
-	}	
+	}
 
 	void Drv8813::Stop (void)
 	{
 		this->run = false;
-	}	
+	}
 
 	void Drv8813::PulseRotation (uint32_t pulse)
 	{
@@ -472,4 +476,3 @@ namespace HAL
 				return false;
 		}
 }
-
