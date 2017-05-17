@@ -16,11 +16,12 @@
 #include "HAL.hpp"
 
 #include "Diag.hpp"
+#include "Cli.hpp"
 
 #include "../../STM32_Driver/inc/stm32f4xx_it.h"
 
 #include "Odometry.hpp"
-#include "VelocityControlStepper.hpp"
+#include "PositionControlStepper.hpp"
 
 using namespace HAL;
 using namespace Utils;
@@ -121,6 +122,24 @@ static void HardwareInit (void)
 
 }
 
+float32_t getTime()
+{
+    float32_t time = 0.0;
+
+    time = static_cast<float32_t>(xTaskGetTickCount());
+    time /= 1000.0;
+
+    return  time;
+}
+
+float32_t abso(float32_t val)
+{
+    if(val < 0.0)
+        val = -val;
+    return val;
+}
+
+
 void TestEvent (void * obj)
 {
 	GPIO *led2 = GPIO::GetInstance(GPIO::GPIO1);
@@ -136,65 +155,107 @@ void TASKHANDLER_Test (void * obj)
 	uint32_t i=0;
 	static uint32_t cpt1=0,cpt2=0;
     TickType_t xLastWakeTime;
-    const TickType_t xFrequency = pdMS_TO_TICKS(567u);
+    const TickType_t xFrequency = pdMS_TO_TICKS(100u);
 
     // Get instances
-    HAL::GPIO *led1 = HAL::GPIO::GetInstance(HAL::GPIO::GPIO0);
-    HAL::GPIO *led2 = HAL::GPIO::GetInstance(HAL::GPIO::GPIO1);
-    HAL::GPIO *led3 = HAL::GPIO::GetInstance(HAL::GPIO::GPIO2);
-    HAL::GPIO *led4 = HAL::GPIO::GetInstance(HAL::GPIO::GPIO3);
+//    HAL::GPIO *led1 = HAL::GPIO::GetInstance(HAL::GPIO::GPIO0);
+//    HAL::GPIO *led2 = HAL::GPIO::GetInstance(HAL::GPIO::GPIO1);
+//    HAL::GPIO *led3 = HAL::GPIO::GetInstance(HAL::GPIO::GPIO2);
+//    HAL::GPIO *led4 = HAL::GPIO::GetInstance(HAL::GPIO::GPIO3);
 
-    //Timer *Tim7 = Timer::GetInstance (Timer::TIMER7);
-    //Tim7->TimerElapsed += TestEvent;
-    //Tim7->Start();
+//	MotionControl::VelocityControlStepper* vc = MotionControl::VelocityControlStepper::GetInstance();
+//    MotionControl::PositionControl * pc = MotionControl::PositionControl::GetInstance();
+//    MotionControl::ProfileGenerator * pg = MotionControl::ProfileGenerator::GetInstance();
+//    MotionControl::TrajectoryPlanning * tp = MotionControl::TrajectoryPlanning::GetInstance();
 
-	MotionControl::VelocityControlStepper* vc = MotionControl::VelocityControlStepper::GetInstance();
-
-	Drv8813* drv1 = Drv8813::GetInstance(Drv8813::DRV8813_1);
-	Drv8813* drv2 = Drv8813::GetInstance(Drv8813::DRV8813_4);
-
-	//drv1->SetDirection(Drv8813State_t::FORWARD);
-	//drv1->SetSpeedRPM(1);
-	//drv2->SetDirection(Drv8813State_t::FORWARD);
-	//drv2->SetSpeedRPM(1);
-	//drv2->Start();
-	//drv1->Start();
-
+	Drv8813* drv1 = Drv8813::GetInstance(Drv8813::DRV8813_4);
+	Drv8813* drv2 = Drv8813::GetInstance(Drv8813::DRV8813_1);
+/*
 	Encoder* e1 = Encoder::GetInstance(Encoder::ENCODER0);
 	Encoder* e2 = Encoder::GetInstance(Encoder::ENCODER1);
-
+*/
 	Location::Odometry* odo = Location::Odometry::GetInstance();
 
 
-	vTaskDelay(1000);
 
-	vc->SetLinearVelocity(1.0);
+	// TODO PHASE INIT
+    drv1->SetSpeedStep(0);
+    drv2->SetSpeedStep(0);
+    drv1->SetDirection(Drv8813State::DISABLED);
+    drv2->SetDirection(Drv8813State::DISABLED);
+
+    vTaskDelay(1000);
+
+    odo->Reset();
+
+    /*drv1->SetDirection(Drv8813State::FORWARD);
+    drv2->SetDirection(Drv8813State::BACKWARD);
+    drv1->SetSpeedStep(50);
+    drv2->SetSpeedStep(50);
+    drv1->PulseRotation(200);
+    drv2->PulseRotation(200);*/
+
+//	vc->SetLinearVelocity(0.2);
+//	drv2->SetSpeedStep(100);
+//    drv2->PulseRotation(152);
+
+//    pc->SetAngularPosition(3.14);
+//    pc->Test();
+	//pc->SetLinearPosition(0.5);
 
     xLastWakeTime = xTaskGetTickCount();
 
     while(1)
     {
         vTaskDelayUntil(&xLastWakeTime, xFrequency);
-        led1->Toggle();
-        led2->Toggle();
+        //led1->Toggle();
+        //led2->Toggle();
         //led3->Toggle();
         //led4->Toggle();
 
-        /*if(i<500)
-        	i+=100;
-
-        drv1->SetSpeed(i);
-        drv2->SetSpeed(i);*/
-
-        vc->Compute(xFrequency);
+        //vc->Compute(xFrequency);
         //drv1->SetSpeedRPS(2.0);
     	//drv2->SetSpeedRPS(2.0);
 
+        //pc->SetAngularPosition(3.14 - odo->GetAngularPosition());
+        //pc->Test();
 
-        //cpt1 = e1->GetAbsoluteValue();
-        //cpt2 = e2->GetAbsoluteValue();
+        /*tp->goLinear(0.5);
 
-        cpt2++;
+        td = getTime();
+
+        while(t < 1.0)
+        {
+            vTaskDelayUntil(&xLastWakeTime, 100);
+            t = getTime() - td;
+            t /= tf;
+
+            // [m/s]
+            //vel1 = 10*pow(t,3) - 15*pow(t,4) + 6*pow(t,5);
+            vel1 = 30*pow(t,2) - 60*pow(t,3) + 30*pow(t,4);
+            vel2 = 30*pow(t,2) - 60*pow(t,3) + 30*pow(t,4);
+
+            //vel1 *= 0.5;
+            vel1 *= 0.2 / 1.875;
+            vel2 *= 0.2 / 1.875;
+
+            // [m/s] to [rot/s]
+            vel1 = vel1 * 1000.0 / 247.607105257;
+            vel2 = vel2 * 1000.0 / 247.607105257;
+
+            drv1->SetSpeedStep((uint32_t)(vel1*200.0));
+            drv2->SetSpeedStep((uint32_t)(vel2*200.0));
+
+            //printf("%.3f\t%.3f\r\n", vel1, vel2);
+        }
+
+        while(1) vTaskDelayUntil(&xLastWakeTime, xFrequency);*/
+
+        //pc->SetLinearPosition(0.5);
+        //pg->StartLinearVelocity(0.5);
+        /*pc->SetAngularPosition(3.14);
+        pg->StartAngularVelocity(3.14);
+        while(1) vTaskDelayUntil(&xLastWakeTime, xFrequency);*/
     }
 }
 
@@ -213,16 +274,9 @@ int main(void)
     HAL::GPIO *led4 = HAL::GPIO::GetInstance(HAL::GPIO::GPIO3);
     led1->Set(GPIO::State::Low);
 
-//    Diag *diag = Diag::GetInstance();
-
     //Set External DAC
     ExtDAC* dac = ExtDAC::GetInstance(ExtDAC::EXTDAC0);
     dac->SetOutputValue(ExtDAC::ExtDAC_Channel0,20u);
-
-    /*PWM* pwm = PWM::GetInstance(PWM::PWM1);
-    pwm->SetFrequency(100000u);
-    pwm->SetDutyCycle(0.5f);
-    pwm->SetState(PWM::State::ENABLED);*/
 
     Drv8813* drv1 = Drv8813::GetInstance(Drv8813::DRV8813_1);
 	Drv8813* drv2 = Drv8813::GetInstance(Drv8813::DRV8813_4);
@@ -230,16 +284,19 @@ int main(void)
 	Encoder* e1 = Encoder::GetInstance(Encoder::ENCODER0);
 	Encoder* e2 = Encoder::GetInstance(Encoder::ENCODER1);
 
-	Location::Odometry* odo = Location::Odometry::GetInstance(true);
-
-	MotionControl::VelocityControlStepper* vc = MotionControl::VelocityControlStepper::GetInstance(false);
+	MotionControl::FBMotionControl * mc = MotionControl::FBMotionControl::GetInstance();
+	//mc->Disable();
+	//MotionControl::PositionControl * pc = MotionControl::PositionControl::GetInstance();
+	//pc->Enable();
 
 	// Serial init
     Serial *serial0 = Serial::GetInstance(Serial::SERIAL0);
 
+    Diag *diag = Diag::GetInstance();
+    CLI  *cli  = CLI::GetInstance();
 
     // Welcome
-    printf("\r\n\r\nS/0 CarteProp Firmware V0.1 (" __DATE__ " - " __TIME__ ")\r\n");
+    printf("\r\n\r\nSirius[B] Firmware Actionneurs V1.0 (" __DATE__ " - " __TIME__ ")\r\n");
 
     // Create Test task
     xTaskCreate(&TASKHANDLER_Test,
