@@ -254,6 +254,15 @@ namespace Location
     }
 
 
+    void Odometry::Reset()
+    {
+        //TODO: Secure by mutex
+        this->robot.X = 0.0;
+        this->robot.Y = 0.0;
+        this->robot.O = 0.0;
+        this->robot.L = 0.0;
+    }
+
     void Odometry::Compute(float32_t period)
     {
         int32_t dl = 0;
@@ -272,6 +281,7 @@ namespace Location
 
         dl = -  leftEncoder->GetRelativeValue();
         dr = + rightEncoder->GetRelativeValue();
+
 
         dlf = static_cast<float32_t>(dl) * WC;
         drf = static_cast<float32_t>(dr);

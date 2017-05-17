@@ -171,7 +171,12 @@ namespace Location
          */
          void SetYO(float32_t Y, float32_t O);
 
-        /**
+         /**
+          * @brief Reset all value of odometry
+          */
+         void Reset();
+
+          /**
          * @brief Compute robot location (Should be called periodically)
          */
          void Compute(float32_t period);
