@@ -154,6 +154,7 @@ void TASKHANDLER_Test (void * obj)
 {
 	uint32_t i=0;
 	static uint32_t cpt1=0,cpt2=0;
+    static float32_t cpt1f=0.0,cpt2f=0.0;
     TickType_t xLastWakeTime;
     const TickType_t xFrequency = pdMS_TO_TICKS(100u);
 
@@ -256,6 +257,19 @@ void TASKHANDLER_Test (void * obj)
         /*pc->SetAngularPosition(3.14);
         pg->StartAngularVelocity(3.14);
         while(1) vTaskDelayUntil(&xLastWakeTime, xFrequency);*/
+
+        /*drv1->SetDirection(Drv8813State::BACKWARD);
+        drv2->SetDirection(Drv8813State::FORWARD);
+        drv1->SetSpeedStep(200);
+        drv2->SetSpeedStep(200);
+        drv1->PulseRotation(cpt1);
+        drv2->PulseRotation(cpt2);*/
+
+        /*cpt1f = 1.0;
+        cpt2f = 1.0;
+
+        drv1->SetSpeedRPS(cpt1f);
+        drv2->SetSpeedRPS(cpt2f);*/
     }
 }
 
@@ -285,6 +299,8 @@ int main(void)
 	Encoder* e2 = Encoder::GetInstance(Encoder::ENCODER1);
 
 	MotionControl::FBMotionControl * mc = MotionControl::FBMotionControl::GetInstance();
+    Location::Odometry* odo = Location::Odometry::GetInstance();
+
 	//mc->Disable();
 	//MotionControl::PositionControl * pc = MotionControl::PositionControl::GetInstance();
 	//pc->Enable();

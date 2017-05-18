@@ -176,6 +176,23 @@ namespace Location
           */
          void Reset();
 
+         /**
+          * @brief Get left sum
+          */
+         int32_t getLeftSum()
+         {
+             return this->leftSum;
+         }
+
+         /**
+          * @brief Get right sum
+          */
+          int32_t getRightSum()
+          {
+              return this->rightSum;
+          }
+
+
           /**
          * @brief Compute robot location (Should be called periodically)
          */
@@ -236,6 +253,16 @@ namespace Location
          * @brief Meca definitions
          */
         MECA_DEF def;
+
+        /**
+         * @protected
+         */
+        int32_t leftSum;
+
+        /**
+         * @protected
+         */
+        int32_t rightSum;
 
         /**
          * @protected

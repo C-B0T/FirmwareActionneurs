@@ -469,10 +469,12 @@ namespace HAL
 	}
 
 	bool Drv8813::IsMoving()
-		{
-			if((this->nb_pulse!=0 or this->run) && this->direction!=DISABLED)
-				return true;
-			else
-				return false;
-		}
+    {
+        if((this->nb_pulse!=0 or this->run) && this->direction!=DISABLED)
+            return true;
+        else
+            return false;
+    }
+
 }
+

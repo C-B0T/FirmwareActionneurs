@@ -28,14 +28,15 @@ using namespace Location;
 #define ANGULAR_VEL_MAX             (3.14f)
 //#define ANGULAR_VEL_MAX             (12.0f)
 //#define ANGULAR_ACC_MAX             (3.14f)
-#define ANGULAR_ACC_MAX             (99.99f)
+#define ANGULAR_ACC_MAX             (3.14f)
 //#define ANGULAR_ACC_MAX             (18.0f)
 #define ANGULAR_PROFILE             (VelocityProfile::PROFILE::POLY5)
 
-#define LINEAR_VEL_MAX              (0.2f)
-//#define LINEAR_VEL_MAX              (0.4f)
+//#define LINEAR_VEL_MAX              (0.2f)
+#define LINEAR_VEL_MAX              (0.4f)
+//#define LINEAR_VEL_MAX              (0.8f)
 //#define LINEAR_ACC_MAX              (1.0f)
-#define LINEAR_ACC_MAX              (99.99f)
+#define LINEAR_ACC_MAX              (0.5f)
 #define LINEAR_PROFILE              (VelocityProfile::PROFILE::POLY5)
 
 #define PG_MOTOR_LEFT               (HAL::Drv8813::ID::DRV8813_4)
@@ -198,7 +199,7 @@ namespace MotionControl
         this->angularVelocityProfiled = 0.0;*/
 
         // FIXME Force const Velocity
-        this->angularVelocity = ANGULAR_VEL_MAX;
+        this->angularVelocity = 1.0;
         this->linearVelocity  = 0.0;
     }
 
@@ -252,7 +253,9 @@ namespace MotionControl
 
         // FIXME Force const Velocity
         this->angularVelocity = 0.0;
-        this->linearVelocity  = LINEAR_VEL_MAX;
+        // FIXME Temporaire pour les essais
+        //this->linearVelocity  = LINEAR_VEL_MAX;
+        this->linearVelocity  = 0.1;
     }
 
 
@@ -270,6 +273,23 @@ namespace MotionControl
 
         // Generate profile
         this->Generate(period);
+
+        // FIXME Ugly Ramps
+        if(this->linearVelocity != 0.0)
+        {
+            // Lin Ramp
+            this->linearVelocity += LINEAR_ACC_MAX*(PG_TASK_PERIOD_MS/1000.0);
+            if(this->linearVelocity  > LINEAR_VEL_MAX)
+                this->linearVelocity  = LINEAR_VEL_MAX;
+        }
+
+        if(this->angularVelocity != 0.0)
+        {
+            // Ang Ramp
+            this->angularVelocity += ANGULAR_ACC_MAX*(PG_TASK_PERIOD_MS/1000.0);
+            if(this->angularVelocity  > ANGULAR_VEL_MAX)
+                this->angularVelocity  = ANGULAR_VEL_MAX;
+        }
 
         // FIXME Force speed
         this->linearVelocityProfiled  = this->linearVelocity;
@@ -295,7 +315,7 @@ namespace MotionControl
         this->rightMotor->SetSpeedStep((uint32_t)(RightVelocity * PG_USTEP));
 
 
-        /*if(this->leftVelocityProfiled != 0.0)
+        /*if(this->leftVelocityProfiled != 0.0 || this->rightVelocityProfiled != 0.0)
             printf("%.3f\t%.3f\r\n", this->leftVelocityProfiled, this->rightVelocityProfiled);*/
     }
 

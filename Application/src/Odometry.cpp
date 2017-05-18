@@ -91,6 +91,9 @@ namespace Location
         this->robot.LeftVelocity  = 0.0;
         this->robot.RightVelocity = 0.0;
 
+        this->leftSum  = 0;
+        this->rightSum = 0;
+
         // Init encoders
         this->leftEncoder  = Encoder::GetInstance(L_ENCODER_ID);
         this->rightEncoder = Encoder::GetInstance(R_ENCODER_ID);
@@ -282,8 +285,11 @@ namespace Location
         dl = -  leftEncoder->GetRelativeValue();
         dr = + rightEncoder->GetRelativeValue();
 
+        this->leftSum  += dl;
+        this->rightSum += dr;
 
-        dlf = static_cast<float32_t>(dl) * WC;
+        //dlf = static_cast<float32_t>(dl) * WC;
+        dlf = static_cast<float32_t>(dl);
         drf = static_cast<float32_t>(dr);
 
         dO =  drf - dlf;

@@ -15,7 +15,7 @@
 #define MC_TASK_PRIORITY            (configMAX_PRIORITIES-3)
 
 #define MC_TASK_PERIOD_MS           (5u)
-#define TP_TASK_PERIOD_MS           (100u)
+#define TP_TASK_PERIOD_MS           (200u)
 #define PG_TASK_PERIOD_MS           (10u)
 #define PC_TASK_PERIOD_MS           (10u)
 #define VC_TASK_PERIOD_MS           (5u)
