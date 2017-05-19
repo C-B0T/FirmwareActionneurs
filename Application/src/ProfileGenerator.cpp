@@ -26,19 +26,19 @@ using namespace Location;
 #define RATIO       1.315789474     // Gear reduction ratio
 //#define RATIO       1.343551914     // Gear reduction ratio
 
-#define ANGULAR_VEL_MAX               (0.314f)
-//#define ANGULAR_VEL_MAX             (3.14f)     /* OK */
+#define ANGULAR_VEL_MAX               (0.314f)     /* Low (OK) */
+//#define ANGULAR_VEL_MAX             (3.14f)     /* Hight (OK) */
 //#define ANGULAR_VEL_MAX             (12.0f)
-#define ANGULAR_ACC_MAX             (0.314f)
-//#define ANGULAR_ACC_MAX             (3.14f)     /* OK */
+#define ANGULAR_ACC_MAX             (0.314f)     /* Low (OK) */
+//#define ANGULAR_ACC_MAX             (3.14f)     /* Hight (OK) */
 //#define ANGULAR_ACC_MAX             (18.0f)
 #define ANGULAR_PROFILE             (VelocityProfile::PROFILE::POLY5)
 
-#define LINEAR_VEL_MAX              (0.01f)
-//#define LINEAR_VEL_MAX              (0.4f)     /* OK */
+#define LINEAR_VEL_MAX              (0.04f)     /* Low (OK) */
+//#define LINEAR_VEL_MAX              (0.4f)     /* Hight (OK) */
 //#define LINEAR_VEL_MAX              (0.8f)
-#define LINEAR_ACC_MAX              (0.01f)
-//#define LINEAR_ACC_MAX              (0.5f)     /* OK */
+#define LINEAR_ACC_MAX              (0.05f)     /* Low (OK) */
+//#define LINEAR_ACC_MAX              (0.5f)     /* Hight (OK) */
 #define LINEAR_PROFILE              (VelocityProfile::PROFILE::POLY5)
 
 #define PG_MOTOR_LEFT               (HAL::Drv8813::ID::DRV8813_4)
