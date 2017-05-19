@@ -208,7 +208,7 @@ namespace MotionControl
                      static_cast<float32_t>(prevTick);
 
             //4. Compute velocity (MotionControl)
-            instance->Compute(period);
+//            instance->Compute(period);
             //instance->Test();
 
             // 5. Set previous tick

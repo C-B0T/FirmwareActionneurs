@@ -428,7 +428,7 @@ void CLI::Compute(float32_t period)
             printf("\r\ntest");
             mc->GoLin(500);
             mc->GoAng(1800);
-            mc->GoLin(500);
+            mc->GoLin(1000);
             mc->GoAng(0);
         }
         else if(strcmp(pch,"ki") == 0)

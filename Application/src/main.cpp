@@ -155,6 +155,8 @@ void TASKHANDLER_Test (void * obj)
 	uint32_t i=0;
 	static uint32_t cpt1=0,cpt2=0;
     static float32_t cpt1f=0.0,cpt2f=0.0;
+    static float32_t pos = 0.0;
+    static float32_t t = 0.0, td = 0.0, tf = 0.0;
     TickType_t xLastWakeTime;
     const TickType_t xFrequency = pdMS_TO_TICKS(100u);
 
@@ -266,10 +268,47 @@ void TASKHANDLER_Test (void * obj)
         drv2->PulseRotation(3*4*250);
         while(1) vTaskDelayUntil(&xLastWakeTime, xFrequency);*/
 
-        /*cpt1f = 1.0;
-        cpt2f = 1.0;
 
-        drv1->SetSpeedRPS(cpt1f);
+        drv1->SetDirection(Drv8813State::BACKWARD);
+        drv2->SetDirection(Drv8813State::FORWARD);
+        cpt2 = 0;
+        cpt1 = 0;
+        drv1->SetSpeedStep(800);
+        drv2->SetSpeedStep(800);
+        drv1->PulseRotation(cpt1);
+        drv2->PulseRotation(cpt2);
+
+        td = getTime();
+        t = getTime() - td;
+
+        while(1) {
+            vTaskDelayUntil(&xLastWakeTime, 10);
+            t = getTime() - td;
+            t /= 4.0;
+            if(t <= 1.0)
+            {
+                //pos = 10*pow(t,3) - 15*pow(t,4) + 6*pow(t,5);
+                pos = 0.6*(30*pow(t,2) - 60*pow(t,3) + 30*pow(t,4)) + 0.4;
+
+                cpt1 = (uint32_t)(pos * 4.0 * 200.0);
+                cpt2 = (uint32_t)(pos * 4.0 * 200.0);
+                //drv1->SetSpeedStep(cpt1/4+1);
+                //drv2->SetSpeedStep(cpt2/4+1);
+                drv1->SetSpeedStep(cpt1/4);
+                drv2->SetSpeedStep(cpt2/4);
+                drv1->PulseRotation(cpt1);
+                drv2->PulseRotation(cpt2);
+                printf("%ld\t%ld\r\n", cpt1, cpt2);
+            }
+            else
+            {
+                drv1->SetDirection(Drv8813State::DISABLED);
+                drv2->SetDirection(Drv8813State::DISABLED);
+            }
+        }
+
+
+        /*drv1->SetSpeedRPS(cpt1f);
         drv2->SetSpeedRPS(cpt2f);*/
 
     }

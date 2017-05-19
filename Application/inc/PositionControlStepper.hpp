@@ -98,7 +98,7 @@ namespace MotionControl
 
             // Set relative positions order
             this->linearPosition  = currentLinearPosition;
-            this->angularPosition = position - currentAngularPosition;
+            this->angularPosition = position;
             this->update = true;
         }
 
