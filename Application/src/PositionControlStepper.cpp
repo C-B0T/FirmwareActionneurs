@@ -216,8 +216,8 @@ namespace MotionControl
                 }
                 this->update = false;
             }
-            if(this->leftMotor->IsMoving() || this->rightMotor->IsMoving())
-                printf("%d\t%d\r\n", this->leftMotor->IsMoving(), this->rightMotor->IsMoving());
+            /*if(this->leftMotor->IsMoving() || this->rightMotor->IsMoving())
+                printf("%d\t%d\r\n", this->leftMotor->IsMoving(), this->rightMotor->IsMoving());*/
         }
         else
         {
