@@ -469,7 +469,7 @@ void CLI::taskHandler (void* obj)
     float32_t period = 0.0f;
 
     // 0. Delay
-    vTaskDelay(pdMS_TO_TICKS(3000u));
+    vTaskDelay(pdMS_TO_TICKS(1000u));
 
     instance->Start();
 

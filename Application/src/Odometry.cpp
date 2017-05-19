@@ -285,6 +285,13 @@ namespace Location
         dl = -  leftEncoder->GetRelativeValue();
         dr = + rightEncoder->GetRelativeValue();
 
+        if( dl > (int32_t)(2.0*(TICK_BY_MM+1.0)*ODO_LOOP_PERIOD_MS) || dl < (int32_t)(-2.0*(TICK_BY_MM+1.0)*ODO_LOOP_PERIOD_MS) ) {
+            dl = 0;
+        }
+        if( dr > (int32_t)(2.0*(TICK_BY_MM+1.0)*ODO_LOOP_PERIOD_MS) || dr < (int32_t)(-2.0*(TICK_BY_MM+1.0)*ODO_LOOP_PERIOD_MS) ) {
+            dr = 0;
+        }
+
         this->leftSum  += dl;
         this->rightSum += dr;
 

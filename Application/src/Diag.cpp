@@ -93,8 +93,9 @@ void Diag::TracesMC()
     //printf("%ld\t%ld\t%.3f\t%.3f\t%.3f\t%.3f\r\n", tp->GetStep(), pg->GetLinearPhase(), pc->GetAngularPosition(), pg->GetAngularVelocity(), odometry->GetAngularVelocity(), odometry->GetAngularPosition());
     //printf("%.3f\t%.3f\r\n", odometry->GetAngularPosition(), odometry->GetAngularVelocity());
     //printf("%.3f\t%.3f\t%.3f\t%.3f\r\n", odometry->GetLinearPosition(), odometry->GetLinearVelocity(), odometry->GetAngularPosition(), odometry->GetAngularVelocity());
-    printf("%ld\t%.3f\t%.3f\t%.3f\t%.3f\r\n", tp->GetStep(), odometry->GetLinearPosition(), odometry->GetLinearVelocity(), odometry->GetAngularPosition(), odometry->GetAngularVelocity());
+    //printf("%ld\t%.3f\t%.3f\t%.3f\t%.3f\r\n", tp->GetStep(), odometry->GetLinearPosition(), odometry->GetLinearVelocity(), odometry->GetAngularPosition(), odometry->GetAngularVelocity());
     //printf("%ld\t%.3f\t%.3f\t%.3f\t%.3f\t%ld\t%ld\r\n", tp->GetStep(), odometry->GetLinearPosition(), odometry->GetLinearVelocity(), odometry->GetAngularPosition(), odometry->GetAngularVelocity(), odometry->getLeftSum(), odometry->getRightSum());
+    printf("%ld\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f\r\n", tp->GetStep(), pg->GetLinearVelocityProfiled(), pg->GetAngularVelocityProfiled(), odometry->GetLinearPosition(), odometry->GetLinearVelocity(), odometry->GetAngularPosition(), odometry->GetAngularVelocity());
 }
 
 void Diag::TracesOD()

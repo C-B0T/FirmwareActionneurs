@@ -185,7 +185,7 @@ void TASKHANDLER_Test (void * obj)
     drv1->SetDirection(Drv8813State::DISABLED);
     drv2->SetDirection(Drv8813State::DISABLED);
 
-    vTaskDelay(1000);
+    vTaskDelay(2000);
 
     odo->Reset();
 
@@ -258,18 +258,20 @@ void TASKHANDLER_Test (void * obj)
         pg->StartAngularVelocity(3.14);
         while(1) vTaskDelayUntil(&xLastWakeTime, xFrequency);*/
 
-        /*drv1->SetDirection(Drv8813State::BACKWARD);
+        /*drv1->SetDirection(Drv8813State::DISABLED);
         drv2->SetDirection(Drv8813State::FORWARD);
-        drv1->SetSpeedStep(200);
-        drv2->SetSpeedStep(200);
-        drv1->PulseRotation(cpt1);
-        drv2->PulseRotation(cpt2);*/
+        drv1->SetSpeedStep(400);
+        drv2->SetSpeedStep(400);
+        drv1->PulseRotation(3*4*250);
+        drv2->PulseRotation(3*4*250);
+        while(1) vTaskDelayUntil(&xLastWakeTime, xFrequency);*/
 
         /*cpt1f = 1.0;
         cpt2f = 1.0;
 
         drv1->SetSpeedRPS(cpt1f);
         drv2->SetSpeedRPS(cpt2f);*/
+
     }
 }
 

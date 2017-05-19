@@ -88,14 +88,16 @@ namespace MotionControl
          */
         void SetAngularPosition(float32_t position)
         {
-            // angular position is absolute
+            // Info: angular position is absolute
+            float32_t currentLinearPosition = 0.0;
             float32_t currentAngularPosition = 0.0;
 
             // Get current position
+            currentLinearPosition = odometry->GetLinearPosition();
             currentAngularPosition = odometry->GetAngularPosition();
 
             // Set relative positions order
-            this->linearPosition  = 0.0;
+            this->linearPosition  = currentLinearPosition;
             this->angularPosition = position - currentAngularPosition;
             this->update = true;
         }
@@ -113,15 +115,17 @@ namespace MotionControl
          */
         void SetLinearPosition(float32_t position)
         {
-            // linear position is absolute
+            // Info: linear position is absolute
             float32_t currentLinearPosition = 0.0;
+            float32_t currentAngularPosition = 0.0;
 
             // Get current position
             currentLinearPosition = odometry->GetLinearPosition();
+            currentAngularPosition = odometry->GetAngularPosition();
 
             // Set relative positions order
             this->linearPosition = position - currentLinearPosition;
-            this->angularPosition = 0.0;
+            this->angularPosition = currentAngularPosition;
             this->update = true;
         }
 

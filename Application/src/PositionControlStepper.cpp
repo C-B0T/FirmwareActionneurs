@@ -150,8 +150,8 @@ namespace MotionControl
      */
     void PositionControl::Compute(float32_t period)
     {
-        //float32_t currentAngularPosition = 0.0;
-        //float32_t currentLinearPosition  = 0.0;
+        float32_t currentAngularPosition = 0.0;
+        float32_t currentLinearPosition  = 0.0;
 
         float32_t LeftPosition  = 0.0;
         float32_t RightPosition = 0.0;
@@ -160,14 +160,14 @@ namespace MotionControl
         {
             this->status |= (1<<0);
 
-            if(this->update == true)
+            //if(this->update == true)
             {
                 // Get current positions
-                //currentAngularPosition = odometry->GetAngularPosition();
-                //currentLinearPosition  = odometry->GetLinearPosition();
+                currentAngularPosition = odometry->GetAngularPosition();
+                currentLinearPosition  = odometry->GetLinearPosition();
 
-                this->angularPositionError = this->angularPosition;// - currentAngularPosition;
-                this->linearPositionError  = this->linearPosition;//  - currentLinearPosition;
+                this->angularPositionError = this->angularPosition - currentAngularPosition;
+                this->linearPositionError  = this->linearPosition  - currentLinearPosition;
 
 
                 // Angular&Linear (radian&meter) to Left&Right (meter&meter)
