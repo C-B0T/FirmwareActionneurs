@@ -385,7 +385,7 @@ namespace HAL
 		if(speed==0)
 			this->period_tick = 0;
 		else
-			this->period_tick = FREQ_TICK_REF/speed;
+			this->period_tick = FREQ_TICK_REF/speed + 1u;
 		return 0;
 	}
 
@@ -413,13 +413,13 @@ namespace HAL
 
 		if(speed>0)
 		{
-			this->period_tick = FREQ_TICK_REF/abs(speed);
+			this->period_tick = FREQ_TICK_REF/abs(speed) + 1u;
 			SetDirection(Drv8813State_t::FORWARD);
 			this->Start();
 		}
 		else if(speed<0)
 		{
-			this->period_tick = FREQ_TICK_REF/abs(speed);
+			this->period_tick = FREQ_TICK_REF/abs(speed) + 1u;
 			SetDirection(Drv8813State_t::BACKWARD);
 			this->Start();
 		}

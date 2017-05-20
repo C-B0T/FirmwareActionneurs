@@ -79,7 +79,6 @@ namespace MotionControl
 
         this->odometry = Odometry::GetInstance();
         this->position = PositionControl::GetInstance();
-        this->profile  = ProfileGenerator::GetInstance();
 
         if(standalone)
         {
@@ -288,7 +287,8 @@ namespace MotionControl
                 //this->profile->StartLinearPosition(this->linearSetPoint);
                 //this->profile->StartAngularPosition(odometry->GetAngularPosition());
                 this->position->SetLinearPosition(this->linearSetPoint);
-                this->profile->StartLinearVelocity(this->linearSetPoint);
+                this->position->SetAngularPosition(odometry->GetAngularPosition());
+                //this->profile->StartLinearVelocity(this->linearSetPoint);
                 this->step = 2;
                 break;
 
@@ -313,8 +313,9 @@ namespace MotionControl
             case 1:    // Set order
                 //this->profile->StartLinearPosition(odometry->GetLinearPosition());
                 //this->profile->StartAngularPosition(this->angularSetPoint);
+                this->position->SetLinearPosition(odometry->GetLinearPosition());
                 this->position->SetAngularPosition(this->angularSetPoint);
-                this->profile->StartAngularVelocity(this->angularSetPoint);
+                //this->profile->StartAngularVelocity(this->angularSetPoint);
                 this->step = 2;
                 break;
 
@@ -387,7 +388,7 @@ namespace MotionControl
                 //this->profile->StartLinearPosition(odometry->GetLinearPosition());
                 //this->profile->StartAngularPosition(this->angularSetPoint);
                 this->position->SetAngularPosition(this->angularSetPoint);
-                this->profile->StartAngularVelocity(this->angularSetPoint);
+                //this->profile->StartAngularVelocity(this->angularSetPoint);
                 step = 2;
                 break;
 
@@ -398,7 +399,7 @@ namespace MotionControl
                 //this->profile->StartLinearPosition(this->linearSetPoint);
                 //this->profile->StartAngularPosition(odometry->GetAngularPosition());
                 this->position->SetLinearPosition(this->linearSetPoint);
-                this->profile->StartLinearVelocity(this->linearSetPoint);
+                //this->profile->StartLinearVelocity(this->linearSetPoint);
                 step = 4;
                 break;
 
@@ -500,7 +501,7 @@ namespace MotionControl
             case 4:    /* Finishing last coordinate */
                 this->updateXYtoLA(n);
                 currentLinearPosition = odometry->GetLinearPosition();
-                if(this->profile->isPositioningFinished() || (abs(this->linearSetPoint - currentLinearPosition) <= 0.01))
+                //JRO if(this->profile->isPositioningFinished() || (abs(this->linearSetPoint - currentLinearPosition) <= 0.01))
                 {
                     step = 5;
                     this->state = FREE;
@@ -557,7 +558,7 @@ namespace MotionControl
         switch (step)
         {
             case 1:
-                if(this->profile->isPositioningFinished())
+                //JRO if(this->profile->isPositioningFinished())
                     step = 2;
                 break;
 
@@ -610,7 +611,7 @@ namespace MotionControl
         switch (step)
         {
             case 1:
-                if(this->profile->isPositioningFinished())
+                //JRO if(this->profile->isPositioningFinished())
                     step = 2;
                 break;
 

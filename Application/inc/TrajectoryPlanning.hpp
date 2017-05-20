@@ -18,7 +18,6 @@
 
 #include "Odometry.hpp"
 #include "PositionControlStepper.hpp"
-#include "ProfileGenerator.hpp"
 
 // FreeRTOS
 #include "FreeRTOS.h"
@@ -152,7 +151,6 @@ namespace MotionControl
 
         Odometry *odometry;
         PositionControl *position;
-        ProfileGenerator *profile;
 
         /**
          * @protected

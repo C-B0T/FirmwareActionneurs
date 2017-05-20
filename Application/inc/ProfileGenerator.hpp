@@ -1,7 +1,7 @@
 /**
- * @file    ProfileGenerator.hpp
+ * @file    ProfileControl.hpp
  * @author  Jeremy ROULLAND
- * @date    16 may 2017
+ * @date    5 feb. 2017
  * @brief   ProfileGenerator class
  */
 
@@ -12,8 +12,7 @@
  #include "Utils.hpp"
  #include "Odometry.hpp"
  #include "PositionControlStepper.hpp"
- #include "VelocityProfile.hpp"
-#include "DRV8813.hpp"
+ #include "MotionProfile.hpp"
 
  // FreeRTOS
  #include "FreeRTOS.h"
@@ -27,19 +26,19 @@
  /*----------------------------------------------------------------------------*/
  typedef struct
  {
-     // Motors
+     // VelocityControlers
      struct
      {
-         HAL::Drv8813::ID ID_left;
-         HAL::Drv8813::ID ID_right;
-     }Motors;
+         PositionControl::ID ID_Angular;
+         PositionControl::ID ID_Linear;
+     }Position;
 
      // Profile generator
      struct pg_profile
      {
          float32_t    maxVel;
          float32_t    maxAcc;
-         enum VelocityProfile::PROFILE profile;
+         enum MotionProfile::PROFILE profile;
      }Profile_Angular;
 
      struct pg_profile Profile_Linear;
@@ -110,29 +109,63 @@
          }
 
          /**
-          * @brief start linear velocity setpoint
+          * @brief Get linear position setpoint
           */
-         void StartLinearVelocity(float32_t distance);
-
-         /**
-          * @brief Start angular velocity setpoint
-          */
-         void StartAngularVelocity(float32_t angle);
-
-         /**
-          * @brief Get linear velocity setpoint
-          */
-         float32_t GetLinearVelocityProfiled()
+         float32_t GetLinearPosition()
          {
-             return this->linearVelocityProfiled;
+             return this->linearPosition;
          }
 
          /**
-          * @brief Get angular velocity setpoint
+          * @brief start linear position setpoint
           */
-         float32_t GetAngularVelocityProfiled()
+         void StartLinearPosition(float32_t position);
+
+         /**
+          * @brief Set linear position setpoint
+          */
+         void SetLinearPosition(float32_t position)
          {
-             return this->angularVelocityProfiled;
+             // Set linear position order
+             this->linearPosition = position;
+         }
+
+         /**
+          * @brief Get angular position setpoint
+          */
+         float32_t GetAngularPosition()
+         {
+             return this->angularPosition;
+         }
+
+         /**
+          * @brief Start angular position setpoint
+          */
+         void StartAngularPosition(float32_t position);
+
+         /**
+          * @brief Set angular position setpoint
+          */
+         void SetAngularPosition(float32_t position)
+         {
+             // Set angular position order
+             this->angularPosition = position;
+         }
+
+         /**
+          * @brief Get linear position setpoint
+          */
+         float32_t GetLinearPositionProfiled()
+         {
+             return this->linearPositionProfiled;
+         }
+
+         /**
+          * @brief Get angular position setpoint
+          */
+         float32_t GetAngularPositionProfiled()
+         {
+             return this->angularPositionProfiled;
          }
 
          void SetLinearVelMax(float32_t velMax)
@@ -161,7 +194,7 @@
          void Compute(float32_t period);
 
          /**
-          * @brief is angular and linear velocitying finished
+          * @brief is angular and linear positioning finished
           */
          bool isPositioningFinished()
          {
@@ -183,6 +216,14 @@
          uint32_t GetLinearPhase()
          {
              return (uint32_t)this->linearPhaseProfile;
+         }
+
+         /**
+          * @brief get safeguard
+          */
+         bool GetSafeguardFlag()
+         {
+             return this->safeguardFlag;
          }
 
      protected:
@@ -220,26 +261,13 @@
           * @protected
           * @brief angular profile generator
           */
-         VelocityProfile angularProfile;
+         MotionProfile angularProfile;
 
          /**
           * @protected
           * @brief linear profile generator
           */
-         VelocityProfile linearProfile;
-
-         /**
-          * @protected
-          * @brief left motor driver
-          */
-         HAL::Drv8813* leftMotor;
-
-         /**
-          * @protected
-          * @brief right motor driver
-          */
-         HAL::Drv8813* rightMotor;
-
+         MotionProfile linearProfile;
 
          /**
           * @protected
@@ -255,57 +283,45 @@
 
          /**
           * @protected
+          * @brief PositionControl instance
+          */
+         PositionControl* positionControl;
+
+         /**
+          * @protected
           * @brief Profile finished
           */
          bool Finished;
 
          /**
           * @protected
-          * @brief Angular velocity required
+          * @brief Angular position required
           */
          float32_t angularPosition;
 
          /**
           * @protected
-          * @brief Linear velocity required
+          * @brief Linear position required
           */
          float32_t linearPosition;
 
          /**
           * @protected
-          * @brief Angular velocity
+          * @brief Angular position profiled
           */
-         float32_t angularVelocity;
+         float32_t angularPositionProfiled;
 
          /**
           * @protected
-          * @brief Linear velocity
+          * @brief Linear position profiled
           */
-         float32_t linearVelocity;
+         float32_t linearPositionProfiled;
 
          /**
           * @protected
-          * @brief Angular velocity profiled
+          * @brief safeguard flag
           */
-         float32_t angularVelocityProfiled;
-
-         /**
-          * @protected
-          * @brief Linear velocity profiled
-          */
-         float32_t linearVelocityProfiled;
-
-         /**
-          * @protected
-          * @brief Left velocity profiled
-          */
-         float32_t leftVelocityProfiled;
-
-         /**
-          * @protected
-          * @brief Right velocity profiled
-          */
-         float32_t rightVelocityProfiled;
+         bool safeguardFlag;
 
          /**
           * @protected
@@ -323,13 +339,13 @@
           * @protected
           * @brief OS Task handle
           *
-          * Used by velocity control loop
+          * Used by position control loop
           */
          TaskHandle_t taskHandle;
 
          /**
           * @protected
-          * @brief Velocity control loop task handler
+          * @brief Position control loop task handler
           * @param obj : Always NULL
           */
          void taskHandler (void* obj);

@@ -12,6 +12,7 @@
 #include "Utils.hpp"
 #include "Odometry.hpp"
 #include "DRV8813.hpp"
+#include "MotionProfile.hpp"
 
 // FreeRTOS
 #include "FreeRTOS.h"
@@ -30,6 +31,16 @@ typedef struct
         HAL::Drv8813::ID ID_left;
         HAL::Drv8813::ID ID_right;
     }Motors;
+
+    // PID
+    struct pc_pid
+    {
+        float32_t    kp;
+        float32_t    ki;
+        float32_t    kd;
+    }PID_Angular;
+
+    struct pc_pid PID_Linear;
 
 }PC_DEF;
 
@@ -88,19 +99,19 @@ namespace MotionControl
          */
         void SetAngularPosition(float32_t position)
         {
-            // Info: angular position is absolute
-            float32_t currentLinearPosition = 0.0;
-            float32_t currentAngularPosition = 0.0;
+            float32_t currentAngularPosition  = 0.0;
+            float32_t time = 0.0;
 
-            // Get current position
-            currentLinearPosition = odometry->GetLinearPosition();
+            // Get current and time
             currentAngularPosition = odometry->GetAngularPosition();
+            time = getTime();
 
-            // Set relative positions order
-            this->linearPosition  = currentLinearPosition;
+            // Set angular position order
             this->angularPosition = position;
-            this->update = true;
-        }
+
+            // Start profile
+             this->angularProfile.SetSetPoint(this->angularPosition, currentAngularPosition, time);
+          }
 
         /**
          * @brief Get angular position setpoint
@@ -115,18 +126,18 @@ namespace MotionControl
          */
         void SetLinearPosition(float32_t position)
         {
-            // Info: linear position is absolute
-            float32_t currentLinearPosition = 0.0;
-            float32_t currentAngularPosition = 0.0;
+            float32_t currentLinearPosition  = 0.0;
+            float32_t time = 0.0;
 
-            // Get current position
+            // Get current and time
             currentLinearPosition = odometry->GetLinearPosition();
-            currentAngularPosition = odometry->GetAngularPosition();
+            time = getTime();
 
-            // Set relative positions order
-            this->linearPosition = position - currentLinearPosition;
-            this->angularPosition = currentAngularPosition;
-            this->update = true;
+            // Set linear position order
+            this->linearPosition = position;
+
+            // Start profile
+             this->linearProfile.SetSetPoint(this->linearPosition, currentLinearPosition, time);
         }
 
         /**
@@ -135,6 +146,22 @@ namespace MotionControl
         float32_t GetLinearPosition()
         {
             return this->linearPosition;
+        }
+
+        /**
+        * @brief Get angular position error
+         */
+        float32_t GetAngularPositionProfiled()
+        {
+            return this->angularPositionProfiled;
+        }
+
+        /**
+        * @brief Get linear position error
+         */
+        float32_t GetLinearPositionProfiled()
+        {
+            return this->linearPositionProfiled;
         }
 
         /**
@@ -154,12 +181,84 @@ namespace MotionControl
         }
 
         /**
+         * @brief Get angular velocity requiered
+         */
+        float32_t GetAngularVelocity()
+        {
+            return this->angularVelocity;
+        }
+
+        /**
+         * @brief Get linear velocity requiered
+         */
+        float32_t GetLinearVelocity()
+        {
+            return this->linearVelocity;
+        }
+
+        /**
+         * @brief Set Angular Kp
+         */
+        void SetAngularKp(float32_t Kp)
+        {
+            this->def.PID_Angular.kp = Kp;
+            this->pid_angular.SetKp(Kp);
+        }
+
+        /**
+         * @brief Set Angular Ki
+         */
+        void SetAngularKi(float32_t Ki)
+        {
+            this->def.PID_Angular.ki = Ki;
+            this->pid_angular.SetKi(Ki);
+        }
+
+        /**
+         * @brief Set Angular Kd
+         */
+        void SetAngularKd(float32_t Kd)
+        {
+            this->def.PID_Angular.kd = Kd;
+            this->pid_angular.SetKd(Kd);
+        }
+
+        /**
+         * @brief Set Linear Kp
+         */
+        void SetLinearKp(float32_t Kp)
+        {
+            this->def.PID_Linear.kp = Kp;
+            this->pid_linear.SetKp(Kp);
+        }
+
+        /**
+         * @brief Set Linear Ki
+         */
+        void SetLinearKi(float32_t Ki)
+        {
+            this->def.PID_Linear.ki = Ki;
+            this->pid_linear.SetKi(Ki);
+        }
+
+        /**
+         * @brief Set Linear Kd
+         */
+        void SetLinearKd(float32_t Kd)
+        {
+            this->def.PID_Linear.kd = Kd;
+            this->pid_linear.SetKd(Kd);
+        }
+
+        /**
          * @brief Enable
          */
         void Enable()
         {
             if(this->enable == false)
             {
+                this->pid_angular.Reset();
+                this->pid_linear.Reset();
                 this->enable = true;
             }
         }
@@ -171,8 +270,6 @@ namespace MotionControl
         {
             if(this->enable == true)
             {
-                this->leftMotor->SetDirection(HAL::Drv8813State::DISABLED);
-                this->rightMotor->SetDirection(HAL::Drv8813State::DISABLED);
                 this->enable = false;
             }
         }
@@ -184,21 +281,20 @@ namespace MotionControl
         {
             bool Finished = false;
 
-            Finished = !this->leftMotor->IsMoving() && !this->rightMotor->IsMoving();
+            Finished = this->angularProfile.isFinished() && this->linearProfile.isFinished();
 
             return Finished;
         }
-
-        /**
-         * @brief Test compute robot velocity
-         */
-        void Test();
 
         /**
          * @brief Compute robot velocity
          */
         void Compute(float32_t period);
 
+        /**
+         * @brief Compute robot velocity
+         */
+        void ToMotors();
 
     protected:
 
@@ -216,6 +312,12 @@ namespace MotionControl
 
         /**
          * @protected
+         * @brief get absolute value
+         */
+        float32_t abs(float32_t val);
+
+        /**
+         * @protected
          * @brief Instance name
          */
         std::string name;
@@ -225,6 +327,18 @@ namespace MotionControl
          * @brief 16 Flags Status
          */
         uint16_t status;
+
+        /**
+         * @protected
+         * @brief angular velocity PID controller
+         */
+        Utils::PID    pid_angular;
+
+        /**
+         * @protected
+         * @brief linear velocity PID controller
+         */
+        Utils::PID    pid_linear;
 
         /**
          * @protected
@@ -240,13 +354,25 @@ namespace MotionControl
 
         /**
          * @protected
-         * @brief Left motor brushless driver instance
+         * @brief MotionProfile asserts
+         */
+        MotionProfile linearProfile;
+
+        /**
+         * @protected
+         * @brief MotionProfile asserts
+         */
+        MotionProfile angularProfile;
+
+        /**
+         * @protected
+         * @brief
          */
         HAL::Drv8813* leftMotor;
 
         /**
          * @protected
-         * @brief Right motor brushless driver instance
+         * @brief
          */
         HAL::Drv8813* rightMotor;
 
@@ -264,6 +390,30 @@ namespace MotionControl
 
         /**
          * @protected
+         * @brief Angular position setpoint
+         */
+        float32_t angularPositionProfiled;
+
+        /**
+         * @protected
+         * @brief Linear position setpoint
+         */
+        float32_t linearPositionProfiled;
+
+        /**
+         * @protected
+         * @brief Angular position last setpoint
+         */
+        float32_t angularPositionLast;
+
+        /**
+         * @protected
+         * @brief Linear position last setpoint
+         */
+        float32_t linearPositionLast;
+
+        /**
+         * @protected
          * @brief Angular position error
          */
         float32_t angularPositionError;
@@ -276,21 +426,21 @@ namespace MotionControl
 
         /**
          * @protected
-         * @brief Profile finished
+         * @brief angular velocity required
          */
-        bool Finished;
+        float32_t angularVelocity;
+
+        /**
+         * @protected
+         * @brief linear velocity required
+         */
+        float32_t linearVelocity;
 
         /**
          * @protected
          * @brief enable/disable
          */
         bool enable;
-
-        /**
-         * @protected
-         * @brief enable/disable
-         */
-        bool update;
 
         /**
          * @protected

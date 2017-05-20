@@ -1,5 +1,5 @@
 /**
- * @file    VelocityProfile.hpp
+ * @file    MotionProfile.hpp
  * @author  Jeremy ROULLAND
  * @date    12 nov. 2016
  * @brief   Motion profile (Trapezoidal, S-Curve, ...)
@@ -31,7 +31,7 @@ namespace MotionControl
      * -
      *
      */
-    class VelocityProfile
+    class MotionProfile
     {
     public:
 
@@ -42,12 +42,19 @@ namespace MotionControl
         {
             NONE = 0,
             LINEAR,
+            TRIANGLE,
+            TRAPEZ,
+            SCURVE,
+            POLY3,
             POLY5,
+            POLY5_P1,
+            POLY5_P2,
+            AUTO,
             MPROFILE_MAX
         };
 
         /**
-         * @brief VelocityProfile Mode List
+         * @brief MotionProfile Mode List
          */
         enum MODE
         {
@@ -59,22 +66,22 @@ namespace MotionControl
         /**
          * @brief Constructor
          */
-        VelocityProfile(float32_t maxVel = 1.0, float32_t maxAcc = 1.0, enum VelocityProfile::PROFILE profile = POLY5);
+        MotionProfile(float32_t maxVel = 1.0, float32_t maxAcc = 1.0, enum MotionProfile::PROFILE profile = POLY5);
 
         /**
          * @brief Destructor
          */
-        ~VelocityProfile();
+        ~MotionProfile();
 
         /**
          * @brief Set setpoint
          */
-         void SetPoint(float32_t distance);
+         void SetPoint(float32_t point);
 
         /**
          * @brief Set setpoint
          */
-         void SetSetPoint(float32_t distance, float32_t currentTime);
+         void SetSetPoint(float32_t point, float32_t currentPoint, float32_t currentTime);
 
         /**
          * @brief set maximum velocity
@@ -95,7 +102,7 @@ namespace MotionControl
         /**
          * @brief set profile used
          */
-         void SetProfile(enum VelocityProfile::PROFILE profile)
+         void SetProfile(enum MotionProfile::PROFILE profile)
         {
             this->profile = profile;
         }
@@ -103,7 +110,7 @@ namespace MotionControl
          /**
           * @brief set mode used
           */
-          void SetMode(enum VelocityProfile::MODE mode)
+          void SetMode(enum MotionProfile::MODE mode)
          {
              this->mode = mode;
          }
@@ -129,7 +136,7 @@ namespace MotionControl
         /**
          * @brief get min time
          */
-        float32_t GetMinTime(enum VelocityProfile::PROFILE profile)
+        float32_t GetMinTime(enum MotionProfile::PROFILE profile)
         {
         	return this->calculateMinTime(profile);
         }
@@ -137,7 +144,7 @@ namespace MotionControl
         /**
          * @brief get setpoint distance
          */
-        float32_t GetMinDist(enum VelocityProfile::PROFILE profile)
+        float32_t GetMinDist(enum MotionProfile::PROFILE profile)
         {
         	return this->calculateMinDist(profile);
         }
@@ -170,13 +177,13 @@ namespace MotionControl
          * @protected
          * @brief calculate the minimum time
          */
-        float32_t calculateMinTime(enum VelocityProfile::PROFILE profile = POLY5);
+        float32_t calculateMinTime(enum MotionProfile::PROFILE profile = AUTO);
 
         /**
          * @protected
          * @brief calculate the minimum distance
          */
-        float32_t calculateMinDist(enum VelocityProfile::PROFILE profile = POLY5);
+        float32_t calculateMinDist(enum MotionProfile::PROFILE profile = AUTO);
 
         /**
          * @protected
@@ -243,12 +250,6 @@ namespace MotionControl
          * @brief calculate quintic profile phase 2 only
          */
         float32_t calculatePolynomial5Phase2Profile(float32_t t);
-
-        /**
-         * @protected
-         * @brief calculate a quintic profile
-         */
-        float32_t calculatePolynomial5VeloProfile(float32_t t);
 
         /**
          * @protected

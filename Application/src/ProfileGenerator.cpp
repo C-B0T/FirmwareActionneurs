@@ -1,7 +1,7 @@
 /**
- * @file    ProfileGenerator.cpp
+ * @file    ProfileControl.cpp
  * @author  Jeremy ROULLAND
- * @date    16 may 2017
+ * @date    5 feb. 2017
  * @brief   ProfileGenerator class
  */
 
@@ -17,33 +17,17 @@ using namespace Location;
 /* Definitions                                                                */
 /*----------------------------------------------------------------------------*/
 
-#define _PI_        3.14159265358979323846
-
-// Motion wheel characteristic
-#define WD_MM       59.9            // Wheel diameter
-#define ADW_MM      129.2           // Axial distance between wheels
-//#define RATIO       1.32            // Gear reduction ratio
-#define RATIO       1.315789474     // Gear reduction ratio
-//#define RATIO       1.343551914     // Gear reduction ratio
-
-//#define ANGULAR_VEL_MAX               (0.314f)     /* Low (OK) */
-#define ANGULAR_VEL_MAX             (3.14f)     /* Hight (OK) */
+//#define ANGULAR_VEL_MAX             (1.57f)
+#define ANGULAR_VEL_MAX             (3.14f)
 //#define ANGULAR_VEL_MAX             (12.0f)
-//#define ANGULAR_ACC_MAX             (0.314f)     /* Low (OK) */
-#define ANGULAR_ACC_MAX             (3.14f)     /* Hight (OK) */
+#define ANGULAR_ACC_MAX             (3.14f)
 //#define ANGULAR_ACC_MAX             (18.0f)
-#define ANGULAR_PROFILE             (VelocityProfile::PROFILE::POLY5)
+#define ANGULAR_PROFILE             (MotionProfile::PROFILE::POLY5)
 
-//#define LINEAR_VEL_MAX              (0.04f)     /* Low (OK) */
-#define LINEAR_VEL_MAX              (0.4f)     /* Hight (OK) */
-//#define LINEAR_VEL_MAX              (0.8f)
-//#define LINEAR_ACC_MAX              (0.05f)     /* Low (OK) */
-#define LINEAR_ACC_MAX              (0.5f)     /* Hight (OK) */
-#define LINEAR_PROFILE              (VelocityProfile::PROFILE::POLY5)
-
-#define PG_MOTOR_LEFT               (HAL::Drv8813::ID::DRV8813_4)
-#define PG_MOTOR_RIGHT              (HAL::Drv8813::ID::DRV8813_1)
-#define PG_USTEP                    (1.0*200.0)
+//#define LINEAR_VEL_MAX              (0.2f)
+#define LINEAR_VEL_MAX              (0.4f)
+#define LINEAR_ACC_MAX              (1.0f)
+#define LINEAR_PROFILE              (MotionProfile::PROFILE::POLY5)
 
 #define PG_TASK_STACK_SIZE          (512u)
 #define PG_TASK_PRIORITY            (configMAX_PRIORITIES-5)
@@ -96,7 +80,7 @@ namespace MotionControl
 {
     ProfileGenerator* ProfileGenerator::GetInstance(bool standalone)
     {
-        // If ProfileGenerator instance already exists
+        // If PositionControl instance already exists
         if(_profileGenerator != NULL)
         {
             return _profileGenerator;
@@ -121,41 +105,41 @@ namespace MotionControl
 
         this->status = 0x0000;
 
+        this->safeguardFlag = false;
+
         this->Finished = false;
 
         // Init Angular motion profile generator
         this->def = _getDefStructure(ProfileGenerator::ANGULAR);
-        this->angularProfile = VelocityProfile(this->def.Profile_Angular.maxVel,
+        this->angularProfile = MotionProfile(this->def.Profile_Angular.maxVel,
                                              this->def.Profile_Angular.maxAcc,
                                              this->def.Profile_Angular.profile);
 
         // Init Linear motion profile generator
         this->def = _getDefStructure(ProfileGenerator::LINEAR);
-        this->linearProfile = VelocityProfile(this->def.Profile_Linear.maxVel,
+        this->linearProfile = MotionProfile(this->def.Profile_Linear.maxVel,
                                             this->def.Profile_Linear.maxAcc,
                                             this->def.Profile_Linear.profile);
 
         // Get instances
         this->odometry = Odometry::GetInstance();
-        this->leftMotor = HAL::Drv8813::GetInstance(PG_MOTOR_LEFT);
-        this->rightMotor = HAL::Drv8813::GetInstance(PG_MOTOR_RIGHT);
+        this->positionControl = PositionControl::GetInstance();
 
-        // Get current velocity
-        currentAngularPosition = this->odometry->GetAngularPosition();
-        currentLinearPosition  = this->odometry->GetLinearPosition();
+        // Get current positions
+        currentAngularPosition = odometry->GetAngularPosition();
+        currentLinearPosition  = odometry->GetLinearPosition();
 
         // Initial values
-        //this->angularPosition = currentAngularPosition;
-        //this->linearPosition  = currentLinearPosition;
-        this->angularVelocityProfiled = 0.0;
-        this->linearVelocityProfiled  = 0.0;
-
-        this->angularVelocity = 0.0;
-        this->linearVelocity  = 0.0;
+        this->angularPosition = currentAngularPosition;
+        this->linearPosition  = currentLinearPosition;
+        this->angularPositionProfiled = currentAngularPosition;
+        this->linearPositionProfiled  = currentLinearPosition;
 
         this->angularProfile.SetSetPoint(currentAngularPosition,
+                                         currentAngularPosition,
                                          this->getTime());
         this->linearProfile.SetSetPoint(currentLinearPosition,
+                                        currentLinearPosition,
                                         this->getTime());
 
         this->angularPhaseProfile = Zero;
@@ -174,175 +158,159 @@ namespace MotionControl
     }
 
     /**
-     * @brief Start angular velocity setpoint
+     * @brief Start angular position setpoint
      */
-    void ProfileGenerator::StartAngularVelocity(float32_t angle)
+    void ProfileGenerator::StartAngularPosition(float32_t position)
     {
-        // angle is absolute
-
         float32_t currentAngularPosition = 0.0;
         float32_t time = 0.0;
 
-        // Set angular velocity order
-        //this->angularPosition = angle;
+        // Set angular position order
+        this->angularPosition = position;
 
-        // Get current velocity and time
-        /*currentAngularPosition = odometry->GetAngularPosition();
+        // Get current position and time
+        currentAngularPosition = odometry->GetAngularPosition();
         time = getTime();
+
+        this->safeguardFlag = false;
 
         // Set profile type
         this->angularPhaseProfile = AccDec;
-        this->angularProfile.SetProfile(ANGULAR_PROFILE);
+        this->angularProfile.SetProfile(MotionProfile::POLY5);
 
         // Start profile
-        this->angularProfile.SetSetPoint(angle - currentAngularPosition, time);
+        this->angularProfile.SetSetPoint(this->angularPosition, currentAngularPosition, time);
 
-        // Set current velocity
-        this->angularVelocityProfiled = 0.0;*/
-
-        // FIXME Force const Velocity
-        this->angularVelocity = 2.0;
-        this->linearVelocity  = 0.0;
+        // Set current position
+        this->angularPositionProfiled = currentAngularPosition;
     }
 
     /**
-     * @brief start linear velocity setpoint
+     * @brief start linear position setpoint
      */
-    void ProfileGenerator::StartLinearVelocity(float32_t distance)
+    void ProfileGenerator::StartLinearPosition(float32_t position)
     {
-        // distance is relative
-
         float32_t currentLinearPosition  = 0.0;
         float32_t time = 0.0;
         float32_t d = 0.0;
 
-        // Set linear velocity order
-        //this->linearPosition = distance;
+        this->safeguardFlag = false;
 
-        // Get current velocity and time
-        //currentLinearPosition = odometry->GetLinearPosition();
+        // Set linear position order
+        this->linearPosition = position;
+
+        // Get current position and time
+        currentLinearPosition = odometry->GetLinearPosition();
         time = getTime();
 
         // Calculate min distance (sign preserved)
-        /*if(this->linearVelocity >= currentLinearVelocity)
-            d = this->linearProfile.GetMinDist(VelocityProfile::POLY5_P1);
+        if(this->linearPosition >= currentLinearPosition)
+            d = this->linearProfile.GetMinDist(MotionProfile::POLY5_P1);
         else
-            d = - this->linearProfile.GetMinDist(VelocityProfile::POLY5_P1);*/
+            d = - this->linearProfile.GetMinDist(MotionProfile::POLY5_P1);
 
         // Choose profile type
-        //if(abs(this->linearVelocity - currentLinearVelocity) <= 2.0*abs(d))
-        /*{
+        if(abs(this->linearPosition - currentLinearPosition) <= 2.0*abs(d))
+        {
             // Set profile type
             this->linearPhaseProfile = AccDec;
-            this->linearProfile.SetProfile(LINEAR_PROFILE);
+            this->linearProfile.SetProfile(MotionProfile::POLY5);
 
             // Start profile
-            this->linearProfile.SetSetPoint(distance, time);
-        }*/
-        //else
-        /*{
+            this->linearProfile.SetSetPoint(this->linearPosition, currentLinearPosition, time);
+        }
+        else
+        {
             // Set profile type
             this->linearPhaseProfile = Acc;
-            this->linearProfile.SetProfile(VelocityProfile::POLY5_P1);
+            this->linearProfile.SetProfile(MotionProfile::POLY5_P1);
 
             // Start profile
-            // 30/04/2017 : Remplacement de this->linearVelocityProfiled par currentLinearVelocity
-            this->linearProfile.SetSetPoint(currentLinearVelocity+d, currentLinearVelocity, time);
-        }*/
+            // 30/04/2017 : Remplacement de this->linearPositionProfiled par currentLinearPosition
+            this->linearProfile.SetSetPoint(currentLinearPosition+d, currentLinearPosition, time);
+        }
 
-        // Set current velocity
-        /*this->linearVelocityProfiled  = 0.0;*/
-
-        // FIXME Force const Velocity
-        this->angularVelocity = 0.0;
-        // FIXME Temporaire pour les essais
-        //this->linearVelocity  = LINEAR_VEL_MAX;
-        this->linearVelocity  = 0.1;
+        // Set current position
+        this->linearPositionProfiled  = currentLinearPosition;
     }
 
 
     /**
-     * @brief  VelocityControl compute
+     * @brief  PositionControl compute
      */
     void ProfileGenerator::Compute(float32_t period)
     {
-        float32_t LeftVelocity  = 0.0;
-        float32_t RightVelocity = 0.0;
+        float32_t angularPositionError = 0.0;
+        float32_t linearPositionError  = 0.0;
 
         float32_t time = getTime();
 
         this->status |= (1<<0);
 
+        // Safeguard
+        //       Avant de générer le prochain point de profile
+        //       s'assurer que l'erreur n'est pas trop grande sinon
+        //       ca veut dire que le système n'arrive pas à suivre.
+        // Get current positions
+        angularPositionError = this->angularPositionProfiled - this->odometry->GetAngularPosition();
+        linearPositionError  = this->linearPositionProfiled - this->odometry->GetLinearPosition();
+
+        // TODO: A améliorer pour faire un pourcentage
+        this->safeguardFlag = false;
+        if(angularPositionError > 0.34) {   // ~20°
+            this->status |= (1<<8);
+            this->safeguardFlag = true;
+        }
+        else {
+            this->status &= ~(1<<8);
+        }
+        if(linearPositionError > 0.1) {       // 10cm
+            this->status |= (1<<9);
+            this->safeguardFlag = true;
+        }
+        else {
+            this->status &= ~(1<<9);
+        }
+
         // Generate profile
         this->Generate(period);
 
-        // FIXME Ugly Ramps
-        if(this->linearVelocity != 0.0)
-        {
-            // Lin Acc Ramp
-            this->linearVelocity += LINEAR_ACC_MAX*(PG_TASK_PERIOD_MS/1000.0);
-            if(this->linearVelocity  > LINEAR_VEL_MAX)
-                this->linearVelocity  = LINEAR_VEL_MAX;
-        }
-
-        if(this->angularVelocity != 0.0)
-        {
-            // Ang Acc Ramp
-            this->angularVelocity += ANGULAR_ACC_MAX*(PG_TASK_PERIOD_MS/1000.0);
-            if(this->angularVelocity  > ANGULAR_VEL_MAX)
-                this->angularVelocity  = ANGULAR_VEL_MAX;
-        }
-
-        // FIXME Force speed
-        this->linearVelocityProfiled  = this->linearVelocity;
-        this->angularVelocityProfiled = this->angularVelocity;
-
-        // Angular&Linear [rad/s]&[m/s] to Left&Right [m/s]&[m/s]
-        LeftVelocity  = this->linearVelocityProfiled - this->angularVelocityProfiled * ADW_MM/1000.0 / 2.0;
-        RightVelocity = this->linearVelocityProfiled + this->angularVelocityProfiled * ADW_MM/1000.0 / 2.0;
-
-        // Left&Right Motor [m/s]&[m/s]
-        this->leftVelocityProfiled  = LeftVelocity;
-        this->rightVelocityProfiled = RightVelocity;
-
-        // Left&Right Wheel [m/s]&[m/s] to Left&Right Motor [rot/s]&[rot/s]
-        LeftVelocity  = LeftVelocity  * 1000.0 / (RATIO * WD_MM * _PI_);
-        RightVelocity = RightVelocity * 1000.0 / (RATIO * WD_MM * _PI_);
-
-        // Always positive (PositionControl handle direction)
-        LeftVelocity  = this->abs(LeftVelocity);
-        RightVelocity = this->abs(RightVelocity);
-
-        this->leftMotor->SetSpeedStep((uint32_t)(LeftVelocity * PG_USTEP));
-        this->rightMotor->SetSpeedStep((uint32_t)(RightVelocity * PG_USTEP));
-
-
-        /*if(this->leftVelocityProfiled != 0.0 || this->rightVelocityProfiled != 0.0)
-            printf("%.3f\t%.3f\r\n", this->leftVelocityProfiled, this->rightVelocityProfiled);*/
+        this->positionControl->SetAngularPosition(this->angularPositionProfiled);
+        this->positionControl->SetLinearPosition(this->linearPositionProfiled);
     }
 
     /**
-     * @brief  VelocityControl generate
+     * @brief  PositionControl generate
      */
     void ProfileGenerator::Generate(float32_t period)
     {
-        float32_t angularVelocityProfiled = 0.0;
-        float32_t linearVelocityProfiled  = 0.0;
-        float32_t velocityProfiled  = 0.0;
+        float32_t currentAngularPosition = 0.0;
+        float32_t currentLinearPosition  = 0.0;
+
+        float32_t angularPositionProfiled = 0.0;
+        float32_t linearPositionProfiled  = 0.0;
 
         float32_t time = getTime();
 
         float32_t d = 0.0;
 
-        // #1 : Compute Profile
-        angularVelocityProfiled = this->angularProfile.Get(time);
-        linearVelocityProfiled  = this->linearProfile.Get(time);
+        // Get current positions
+        currentAngularPosition = odometry->GetAngularPosition();
+        currentLinearPosition  = odometry->GetLinearPosition();
 
-        // Set Velocity profiled
-        this->angularVelocityProfiled = angularVelocityProfiled;
-        this->linearVelocityProfiled  = linearVelocityProfiled;
+        // #1 : Update setpoint
+        //this->angularProfile.SetPoint(this->angularPosition);
+        //this->linearProfile.SetPoint(this->linearPosition);
 
-        // #2 : Profile to Profile
+        // #2 : Compute Profile
+        angularPositionProfiled = this->angularProfile.Get(time);
+        linearPositionProfiled  = this->linearProfile.Get(time);
+
+        // Set Positions profiled required to positions controller
+        this->angularPositionProfiled = angularPositionProfiled;
+        this->linearPositionProfiled  = linearPositionProfiled;
+
+        // #3 : Profile to Profile
         // Angular profile
         switch (this->angularPhaseProfile)
         {
@@ -359,7 +327,7 @@ namespace MotionControl
                 break;
 
             case AccDec:
-                //this->angularProfile.SetPoint(this->angularPosition);
+                this->angularProfile.SetPoint(this->angularPosition);
                 if(this->angularProfile.isFinished())
                 {
                     this->angularPhaseProfile = Zero;
@@ -377,16 +345,47 @@ namespace MotionControl
                 break;
 
             case Acc:
+                if(this->linearProfile.isFinished())
+                {
+                    this->linearPhaseProfile = ConstVel;
+                    this->linearProfile.SetProfile(MotionProfile::LINEAR);
+
+                    d = this->linearProfile.GetMinDist(MotionProfile::POLY5_P2);
+
+                    // Start profiling of the linear position
+                    this->linearProfile.SetSetPoint(this->linearPosition-d, this->linearPositionProfiled, time);
+                }
                 break;
 
             case ConstVel:
+                d = this->linearProfile.GetMinDist(MotionProfile::POLY5_P2);
+                if(abs(this->linearPosition - this->linearPositionProfiled) <= d)
+                {
+                    this->linearPhaseProfile = Dec;
+                    this->linearProfile.SetProfile(MotionProfile::POLY5_P2);
+                    this->linearProfile.SetSetPoint(this->linearPosition, this->linearPositionProfiled, time);
+                }
+                else
+                {
+                    if(this->linearProfile.isFinished())
+                    {
+                        this->linearPhaseProfile = ConstVel;
+                        this->linearProfile.SetProfile(MotionProfile::LINEAR);
+                        this->linearProfile.SetSetPoint(this->linearPositionProfiled+1.0, this->linearPositionProfiled, time);
+                    }
+                }
                 break;
 
             case Dec:
+                this->linearProfile.SetPoint(this->linearPosition);
+                if(this->linearProfile.isFinished())
+                {
+                    this->linearPhaseProfile = Zero;
+                }
                 break;
 
             case AccDec:
-                //this->linearProfile.SetPoint(this->linearPosition);
+                this->linearProfile.SetPoint(this->linearPosition);
                 if(this->linearProfile.isFinished())
                 {
                     this->linearPhaseProfile = Zero;

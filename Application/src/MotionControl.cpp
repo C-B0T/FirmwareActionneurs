@@ -17,7 +17,7 @@
 #define MC_TASK_PERIOD_MS           (5u)
 #define TP_TASK_PERIOD_MS           (200u)
 #define PG_TASK_PERIOD_MS           (10u)
-#define PC_TASK_PERIOD_MS           (10u)
+#define PC_TASK_PERIOD_MS           (100u)
 #define VC_TASK_PERIOD_MS           (5u)
 
 /*----------------------------------------------------------------------------*/
@@ -110,8 +110,8 @@ namespace MotionControl
             this->pc->Compute(PC_TASK_PERIOD_MS);
 
         // #3 Schedule ProfileGenerator
-        if((localTime % PG_TASK_PERIOD_MS) == 0)
-            this->pg->Compute(PG_TASK_PERIOD_MS);
+        /*if((localTime % PG_TASK_PERIOD_MS) == 0)
+            this->pg->Compute(PG_TASK_PERIOD_MS);*/
     }
 
     void FBMotionControl::Compute(float32_t period)
@@ -175,8 +175,8 @@ namespace MotionControl
             this->pc->Compute((period * PC_TASK_PERIOD_MS) / MC_TASK_PERIOD_MS);
 
         // #3 Schedule ProfileGenerator
-        if((localTime % PG_TASK_PERIOD_MS) == 0)
-            this->pg->Compute((period * PG_TASK_PERIOD_MS) / MC_TASK_PERIOD_MS);
+        /*if((localTime % PG_TASK_PERIOD_MS) == 0)
+            this->pg->Compute((period * PG_TASK_PERIOD_MS) / MC_TASK_PERIOD_MS);*/
     }
 
 
@@ -208,7 +208,7 @@ namespace MotionControl
                      static_cast<float32_t>(prevTick);
 
             //4. Compute velocity (MotionControl)
-//            instance->Compute(period);
+            instance->Compute(period);
             //instance->Test();
 
             // 5. Set previous tick
