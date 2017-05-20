@@ -269,6 +269,7 @@ void TASKHANDLER_Test (void * obj)
         while(1) vTaskDelayUntil(&xLastWakeTime, xFrequency);*/
 
 
+        /* // Profilling
         drv1->SetDirection(Drv8813State::BACKWARD);
         drv2->SetDirection(Drv8813State::FORWARD);
         cpt2 = 0;
@@ -284,7 +285,7 @@ void TASKHANDLER_Test (void * obj)
         while(1) {
             vTaskDelayUntil(&xLastWakeTime, 10);
             t = getTime() - td;
-            t /= 4.0;
+            t /= 2.0;
             if(t <= 1.0)
             {
                 //pos = 10*pow(t,3) - 15*pow(t,4) + 6*pow(t,5);
@@ -294,8 +295,8 @@ void TASKHANDLER_Test (void * obj)
                 cpt2 = (uint32_t)(pos * 4.0 * 200.0);
                 //drv1->SetSpeedStep(cpt1/4+1);
                 //drv2->SetSpeedStep(cpt2/4+1);
-                drv1->SetSpeedStep(cpt1/4);
-                drv2->SetSpeedStep(cpt2/4);
+                drv1->SetSpeedStep(cpt1/2);
+                drv2->SetSpeedStep(cpt2/2);
                 drv1->PulseRotation(cpt1);
                 drv2->PulseRotation(cpt2);
                 printf("%ld\t%ld\r\n", cpt1, cpt2);
@@ -305,7 +306,7 @@ void TASKHANDLER_Test (void * obj)
                 drv1->SetDirection(Drv8813State::DISABLED);
                 drv2->SetDirection(Drv8813State::DISABLED);
             }
-        }
+        }*/
 
 
         /*drv1->SetSpeedRPS(cpt1f);

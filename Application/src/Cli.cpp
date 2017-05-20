@@ -61,7 +61,6 @@ CLI::CLI()
 
     this->odometry = Odometry::GetInstance(false);
     this->pc = PositionControl::GetInstance(false);
-    this->pg = ProfileGenerator::GetInstance(false);
     this->tp = TrajectoryPlanning::GetInstance(false);
     this->mc = FBMotionControl::GetInstance();
 
@@ -117,19 +116,19 @@ void CLI::Compute(float32_t period)
     else if(c == ':')
     {
         putchar(c);
-        pg->SetAngularVelMax(3.14);
+        /*pg->SetAngularVelMax(3.14);
         pg->SetAngularAccMax(3.14);
         pg->SetLinearVelMax(0.4);
-        pg->SetLinearAccMax(1.0);
+        pg->SetLinearAccMax(1.0);*/
         printf("\r\nAngVel=3.14 AngAcc=3.14 LinVel=0.4 LinAcc=1.0\r\n");
     }
     else if(c == '!')
     {
         putchar(c);
-        pg->SetAngularVelMax(12.0);
+        /*pg->SetAngularVelMax(12.0);
         pg->SetAngularAccMax(18.0);
         pg->SetLinearVelMax(1.0);
-        pg->SetLinearAccMax(2.0);
+        pg->SetLinearAccMax(2.0);*/
         printf("\r\nAngVel=12.0 AngAcc=18.0 LinVel=1.0 LinAcc=2.0\r\n");
     }
     else if( ((c >= '0') && (c <= '9')) ||
@@ -349,7 +348,6 @@ void CLI::Compute(float32_t period)
             printf(" safeguard:%d\r\n", mc->GetSafeguard());
             printf(" mc:0x%04x\r\n", mc->GetStatus());
             printf(" tp:0x%04x\r\n", tp->GetStatus());
-            printf(" pg:0x%04x\r\n", pg->GetStatus());
             printf(" pc:0x%04x\r\n", pc->GetStatus());
             printf(" od:0x%04x\r\n", odometry->GetStatus());
         }
@@ -385,7 +383,7 @@ void CLI::Compute(float32_t period)
                 v = 0.0;
 
             printf("\r\nsetvellin %.3f", v);
-            pg->SetLinearVelMax(v);
+            //pg->SetLinearVelMax(v);
         }
         else if(strcmp(pch,"setvelang") == 0)
         {
@@ -397,7 +395,7 @@ void CLI::Compute(float32_t period)
                 v = 0.0;
 
             printf("\r\nsetvelang %.3f", v);
-            pg->SetAngularVelMax(v);
+            //pg->SetAngularVelMax(v);
         }
         else if(strcmp(pch,"setacclin") == 0)
         {
@@ -409,7 +407,7 @@ void CLI::Compute(float32_t period)
                 a = 0.0;
 
             printf("\r\nsetacclin %.3f", a);
-            pg->SetLinearAccMax(a);
+            //pg->SetLinearAccMax(a);
         }
         else if(strcmp(pch,"setaccang") == 0)
         {
@@ -421,7 +419,7 @@ void CLI::Compute(float32_t period)
                 a = 0.0;
 
             printf("\r\nsetaccang %.3f", a);
-            pg->SetAngularAccMax(a);
+            //pg->SetAngularAccMax(a);
         }
         else if(strcmp(pch,"Test") == 0)
         {

@@ -18,7 +18,6 @@
 #include "Odometry.hpp"
 #include "MotionControl.hpp"
 #include "TrajectoryPlanning.hpp"
-#include "ProfileGenerator.hpp"
 #include "PositionControlStepper.hpp"
 
 // LED
@@ -31,7 +30,7 @@
 #include "timers.h"
 
 using namespace Location;
-/*JRO using namespace MotionControl;*/
+using namespace MotionControl;
 using namespace HAL;
 
 /*----------------------------------------------------------------------------*/
@@ -95,7 +94,6 @@ typedef void (*FunctionFunc)();
 
         Odometry           *odometry;
         PositionControl    *pc;
-        ProfileGenerator   *pg;
         TrajectoryPlanning *tp;
         FBMotionControl    *mc;
 

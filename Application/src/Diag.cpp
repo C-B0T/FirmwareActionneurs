@@ -70,7 +70,6 @@ Diag::Diag()
 
     this->odometry = Odometry::GetInstance(false);
     this->pc = PositionControl::GetInstance(false);
-    this->pg = ProfileGenerator::GetInstance(false);
     this->tp = TrajectoryPlanning::GetInstance(false);
     this->mc = FBMotionControl::GetInstance();
 
@@ -95,7 +94,8 @@ void Diag::TracesMC()
     //printf("%.3f\t%.3f\t%.3f\t%.3f\r\n", odometry->GetLinearPosition(), odometry->GetLinearVelocity(), odometry->GetAngularPosition(), odometry->GetAngularVelocity());
     //printf("%ld\t%.3f\t%.3f\t%.3f\t%.3f\r\n", tp->GetStep(), odometry->GetLinearPosition(), odometry->GetLinearVelocity(), odometry->GetAngularPosition(), odometry->GetAngularVelocity());
     //printf("%ld\t%.3f\t%.3f\t%.3f\t%.3f\t%ld\t%ld\r\n", tp->GetStep(), odometry->GetLinearPosition(), odometry->GetLinearVelocity(), odometry->GetAngularPosition(), odometry->GetAngularVelocity(), odometry->getLeftSum(), odometry->getRightSum());
-    printf("%ld\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f\r\n", tp->GetStep(), pg->GetLinearVelocityProfiled(), pg->GetAngularVelocityProfiled(), odometry->GetLinearPosition(), odometry->GetLinearVelocity(), odometry->GetAngularPosition(), odometry->GetAngularVelocity());
+    //printf("%ld\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f\r\n", tp->GetStep(), pg->GetLinearVelocityProfiled(), pg->GetAngularVelocityProfiled(), odometry->GetLinearPosition(), odometry->GetLinearVelocity(), odometry->GetAngularPosition(), odometry->GetAngularVelocity());
+    printf("%ld\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%.3f\r\n", tp->GetStep(), pc->GetLinearPositionProfiled(), pc->GetAngularPositionProfiled(), odometry->GetLinearPosition(), odometry->GetLinearVelocity(), odometry->GetAngularPosition(), odometry->GetAngularVelocity());
 }
 
 void Diag::TracesOD()

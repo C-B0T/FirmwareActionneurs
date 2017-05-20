@@ -18,7 +18,6 @@
 #include "Odometry.hpp"
 #include "MotionControl.hpp"
 #include "TrajectoryPlanning.hpp"
-#include "ProfileGenerator.hpp"
 #include "PositionControlStepper.hpp"
 
 #include "Diag.hpp"
@@ -86,7 +85,6 @@ typedef void (*FunctionFunc)();
 
         Odometry           *odometry;
         PositionControl    *pc;
-        ProfileGenerator   *pg;
         TrajectoryPlanning *tp;
         FBMotionControl    *mc;
 
