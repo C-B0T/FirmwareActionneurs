@@ -49,15 +49,15 @@ using namespace Location;
 //#define LINEAR_VEL_MAX              (1.0f)
 //#define LINEAR_ACC_MAX              (0.05f)     /* Low (OK) */
 //#define LINEAR_ACC_MAX              (0.5f)     /* Hight (OK) */
-#define LINEAR_ACC_MAX              (0.5f)
+#define LINEAR_ACC_MAX              (0.2f)
 #define LINEAR_PROFILE              (MotionProfile::PROFILE::POLY5)
 
 
-#define ANGULAR_POSITION_PID_KP     (31.2f)
-#define ANGULAR_POSITION_PID_KI     (0.0f)
+#define ANGULAR_POSITION_PID_KP     (0.314f)
+#define ANGULAR_POSITION_PID_KI     (0.03f)
 #define ANGULAR_POSITION_PID_KD     (0.0f)
 
-#define LINEAR_POSITION_PID_KP      (42.75f)
+#define LINEAR_POSITION_PID_KP      (0.5f)
 #define LINEAR_POSITION_PID_KI      (0.0f)
 #define LINEAR_POSITION_PID_KD      (0.0f)
 
@@ -259,17 +259,17 @@ namespace MotionControl
         this->linearPositionError  = this->linearPositionProfiled  - currentLinearPosition;
 
         // FIXME PID Test Kp
-        this->angularPositionError *= 0.4;
-        this->linearPositionError  *= 0.5;
+        //this->angularPositionError *= 0.4;
+        //this->linearPositionError  *= 0.5;
 
         // FIXME Force lin to callibrate ang
         //this->linearPositionError = 0.0;
 
         // Compute PID
-        /*this->pid_angular.SetSetpoint(this->angularPositionProfiled);
+        this->pid_angular.SetSetpoint(this->angularPositionProfiled);
         this->pid_linear.SetSetpoint(this->linearPositionProfiled);
         this->angularPositionError = this->pid_angular.Get(currentAngularPosition);
-        this->linearPositionError  = this->pid_linear.Get(currentLinearPosition);*/
+        this->linearPositionError  = this->pid_linear.Get(currentLinearPosition);
 
         if(!this->isPositioningFinished())
         {
@@ -297,10 +297,6 @@ namespace MotionControl
 
             this->angularVelocity = this->angularPositionError * 1000.0 / PC_TASK_PERIOD_MS;
             this->linearVelocity  = this->linearPositionError * 1000.0 / PC_TASK_PERIOD_MS;
-
-            // FIXME PID Test Kp
-            /*this->angularVelocity *= 0.3;
-            this->linearVelocity  *= 0.5;*/
 
             if(!this->isPositioningFinished())
             {

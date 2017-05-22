@@ -15,8 +15,8 @@ using namespace HAL;
 /* Definitions                                                                */
 /*----------------------------------------------------------------------------*/
 
-#define L_ENCODER_ID    (Encoder::ENCODER0)
-#define R_ENCODER_ID    (Encoder::ENCODER1)
+#define L_ENCODER_ID    (Encoder::ENCODER1)
+#define R_ENCODER_ID    (Encoder::ENCODER0)
 
 // Encoder wheel characteristic
 #define WD          41.1            // Wheel diameter
@@ -29,6 +29,7 @@ using namespace HAL;
 
 #define TICK_BY_MM  31.722561893    // (ER/(_PI_*WD))
 #define ADW_TICK    2515.599158127  // (ADW * TICK_BY_MM)
+//#define ADW_TICK    2515.099158127  // (ADW * TICK_BY_MM)
 
 
 
@@ -282,8 +283,8 @@ namespace Location
 
         this->status |= (1<<0);
 
-        dl = -  leftEncoder->GetRelativeValue();
-        dr = + rightEncoder->GetRelativeValue();
+        dl = +  leftEncoder->GetRelativeValue();
+        dr = - rightEncoder->GetRelativeValue();
 
         if( dl > (int32_t)(10.0*(TICK_BY_MM+1.0)*ODO_LOOP_PERIOD_MS) || dl < (int32_t)(-10.0*(TICK_BY_MM+1.0)*ODO_LOOP_PERIOD_MS) ) {
             dl = 0;
@@ -308,10 +309,10 @@ namespace Location
         this->robot.AngularVelocity = (dO / ADW_TICK);
         this->robot.LinearVelocity  = dL;
 
-        while(this->robot.O > _2_PI_)
+        /*while(this->robot.O > _2_PI_)
             this->robot.O -= _2_PI_;
         while(this->robot.O < -_2_PI_)
-            this->robot.O += _2_PI_;
+            this->robot.O += _2_PI_;*/
 
         dX = cos(this->robot.O) * dL;
         dY = sin(this->robot.O) * dL;

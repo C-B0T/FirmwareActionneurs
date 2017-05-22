@@ -358,6 +358,9 @@ namespace MotionControl
         switch (step)
         {
             case 1:    // Start Angular Position
+                this->position->SetLinearPosition(odometry->GetLinearPosition());
+                this->position->SetAngularPosition(this->angularSetPoint);
+                step = 2;
                 break;
 
             case 2:
@@ -367,43 +370,22 @@ namespace MotionControl
                 }
                 break;
 
-            case 3:    // Start Linear Position
-                break;
-
-            case 4:
-                if(this->position->isPositioningFinished())
-                {
-                    step = 5;
-                    this->state = FREE;
-                }
-                break;
-
-            default:
-                break;
-        }
-
-        switch (step)
-        {
-            case 1:
-                //this->profile->StartLinearPosition(odometry->GetLinearPosition());
-                //this->profile->StartAngularPosition(this->angularSetPoint);
-                this->position->SetAngularPosition(this->angularSetPoint);
-                //this->profile->StartAngularVelocity(this->angularSetPoint);
-                step = 2;
-                break;
-
-            case 2:
-                break;
-
             case 3:
-                //this->profile->StartLinearPosition(this->linearSetPoint);
-                //this->profile->StartAngularPosition(odometry->GetAngularPosition());
-                this->position->SetLinearPosition(this->linearSetPoint);
-                //this->profile->StartLinearVelocity(this->linearSetPoint);
                 step = 4;
                 break;
 
-            case 4:
+            case 4:    // Start Linear Position
+                this->position->SetLinearPosition(this->linearSetPoint);
+                this->position->SetAngularPosition(odometry->GetAngularPosition());
+                step = 5;
+                break;
+
+            case 5:
+                if(this->position->isPositioningFinished())
+                {
+                    step = 6;
+                    this->state = FREE;
+                }
                 break;
 
             default:
