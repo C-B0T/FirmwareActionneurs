@@ -13,19 +13,20 @@
 /*----------------------------------------------------------------------------*/
 
 // CYLINDER BOTTOM
-#define CYL0_MOTOR      (HAL::Drv8813::ID::DRV8813_2)
+//#define CYL0_MOTOR      (HAL::Drv8813::ID::DRV8813_2)
+#define CYL0_MOTOR      (HAL::Drv8813::ID::DRV8813_4)
 #define CYL0_TOPZ       (HAL::GPIO::ID::GPIO57)
-#define CYL0_INDEX_MAX  (9u)
 #define CYL0_SHORTPATH  (true)
-#define CYL0_RATIO      (1.0*200.0f)
-#define CYL0_SPEED      (200u)      // Step/sec
+#define CYL0_INDEX_MAX  (9u)
+#define CYL0_RATIO      ((5.89f*400.0f)/(CYL0_INDEX_MAX+1u))   // NbStep pour 1 tour barillet
+#define CYL0_SPEED      (100u)          // Step/sec
 
 // CYLINDER TOP
-#define CYL1_MOTOR      (HAL::Drv8813::ID::DRV8813_3)
+#define CYL1_MOTOR      (HAL::Drv8813::ID::DRV8813_1)
 #define CYL1_TOPZ       (HAL::GPIO::ID::GPIO58)
 #define CYL1_INDEX_MAX   (5u)
 #define CYL1_SHORTPATH  (false)
-#define CYL1_RATIO      (1.0*200.0f)
+#define CYL1_RATIO      ((5.89f*400.0f)/(CYL1_INDEX_MAX+1u))   // NbStep pour 1 tour barillet
 #define CYL1_SPEED      (10u)      // Step/sec
 
 /*----------------------------------------------------------------------------*/
@@ -127,15 +128,18 @@ int8_t Cylinder::Goto(int8_t index)
     if(this->def.shortPath)
     {
         if(nbIndex > this->def.indexMax/2)
-            nbIndex -= this->def.indexMax;
+            nbIndex -= this->def.indexMax + 1u;
         if(nbIndex < -this->def.indexMax/2)
-            nbIndex += this->def.indexMax;
-
-        index += nbIndex;
+            nbIndex += this->def.indexMax + 1u;
     }
 
+    if(nbIndex > 0)
+        this->motor->SetDirection(HAL::Drv8813State_t::FORWARD);
+    else if(nbIndex < 0)
+        this->motor->SetDirection(HAL::Drv8813State_t::BACKWARD);
+
     this->motor->SetSpeedStep(this->def.speed);
-    this->motor->PulseRotation(this->def.ratio * nbIndex);
+    this->motor->PulseRotation(this->def.ratio * abs(nbIndex));
 
     this->index = index;
 
@@ -144,12 +148,14 @@ int8_t Cylinder::Goto(int8_t index)
 
 int8_t Cylinder::SearchRefPoint()
 {
+    this->motor->SetDirection(HAL::Drv8813State_t::FORWARD);
     this->motor->SetSpeedStep(this->def.speed);
-    this->motor->PulseRotation(this->def.ratio * this->def.indexMax);
+    this->motor->PulseRotation(this->def.ratio * (this->def.indexMax+1u));
 
     while(this->motor->IsMoving())
     {
-        if(this->topz->Get() == HAL::GPIO::State::Low)
+        //if(this->topz->Get() == HAL::GPIO::State::Low)
+        if(this->topz->Get() == HAL::GPIO::State::High)
         {
             this->motor->SetDirection(HAL::Drv8813State_t::DISABLED);
             this->index = 0;
