@@ -26,6 +26,7 @@
 
 #include "Cylinder.hpp"
 //#include "Q7050.hpp"
+#include "Mandible.hpp"
 
 #include "ADConverter.hpp"
 
@@ -180,6 +181,7 @@ void TASKHANDLER_Test (void * obj)
     //Cylinder* bari = Cylinder::GetInstance(Cylinder::ID::CYLINDER1);
 
     //Q7050* q1 = Q7050::GetInstance(Q7050::Q7050_1_2);
+    Mandible* man = Mandible::GetInstance(Mandible::ID::MANDIBLE_1);
     ADConverter* adc = ADConverter::GetInstance(ADConverter::ADC_Channel0);
 
 	// TODO PHASE INIT
@@ -218,6 +220,7 @@ void TASKHANDLER_Test (void * obj)
     //q1->LowerPincer();
     //q1->Open();
     //q1->Close();
+    //man->SetPosition(Mandible::Position::Middle);
 
     xLastWakeTime = xTaskGetTickCount();
 
@@ -271,6 +274,7 @@ int main(void)
     Cylinder* barilletBas  = Cylinder::GetInstance(Cylinder::ID::CYLINDER0);
 
     //Q7050* q1 = Q7050::GetInstance(Q7050::Q7050_1_2);
+    Mandible* man = Mandible::GetInstance(Mandible::ID::MANDIBLE_1);
 
     ADConverter* adc = ADConverter::GetInstance(ADConverter::ADC_Channel0);
 
