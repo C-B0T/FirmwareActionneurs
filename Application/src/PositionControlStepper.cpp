@@ -45,7 +45,8 @@ using namespace Location;
 
 //#define LINEAR_VEL_MAX              (0.04f)     /* Low (OK) */
 //#define LINEAR_VEL_MAX              (0.4f)     /* Hight (OK) */
-#define LINEAR_VEL_MAX              (0.468f)
+//#define LINEAR_VEL_MAX              (0.468f)
+#define LINEAR_VEL_MAX              (0.200f)
 //#define LINEAR_VEL_MAX              (1.0f)
 //#define LINEAR_ACC_MAX              (0.05f)     /* Low (OK) */
 //#define LINEAR_ACC_MAX              (0.5f)     /* Hight (OK) */

@@ -157,7 +157,7 @@ static DRV8813_DEF _getDrv8813Struct (enum Drv8813::ID id)
 	case HAL::Drv8813::DRV8813_4:
 		drv.MODE				=	Drv8813Mode::STEPPER_MODE;
 		drv.USTEP_MODE			= 	USTEP_1;
-		drv.CURRENT_COEF		=	100u;
+		drv.CURRENT_COEF		=	90u;//90u;//100u;
 		drv.PWM_FREQ			=	STEPPER_FREQ_PWM;
 		drv.NB_MOTOR_STEP		=	200u;
 		drv.GPIO_DECAY			=	DRV_GPIO_DECAY;

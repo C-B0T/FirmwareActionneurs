@@ -287,7 +287,7 @@ using namespace HAL;
 #define PWM24_FREQ			(100000u)
 #define PWM24_DUTYCYCLE		(0.5f)
 #define PWM24_TIMER			(TIM12)
-#define PWM24_TIMER_CHANNEL	(TIM_Channel_1)
+#define PWM24_TIMER_CHANNEL	(TIM_Channel_2)
 #define PWM24_TIMER_FREQ	(SystemCoreClock / 2)	// TIM2 clock is derivated from APB1 clock
 
 // TIM12_CH2
@@ -295,10 +295,10 @@ using namespace HAL;
 #define PWM25_IO_PIN		(GPIO_Pin_14)
 #define PWM25_IO_PINSOURCE	(GPIO_PinSource14)
 #define PWM25_IO_AF			(GPIO_AF_TIM12)
-#define PWM25_FREQ			(100000u)
+#define PWM25_FREQ			(10000u)
 #define PWM25_DUTYCYCLE		(0.5f)
 #define PWM25_TIMER			(TIM12)
-#define PWM25_TIMER_CHANNEL	(TIM_Channel_2)
+#define PWM25_TIMER_CHANNEL	(TIM_Channel_1)
 #define PWM25_TIMER_FREQ	(SystemCoreClock / 2)	// TIM2 clock is derivated from APB1 clock
 
 
@@ -439,7 +439,7 @@ static PWM_DEF _getPWMStruct (enum PWM::ID id)
 		pwm.TIMER.CLOCKFREQ			=	PWM7_TIMER_FREQ;
 		pwm.PWM.DEFAULT_FREQ		=	PWM7_FREQ;
 		pwm.PWM.DEFAULT_DUTYCYCLE	=	PWM7_DUTYCYCLE;
-		break;	
+		break;
 	case PWM::PWM8:
 		pwm.IO.PORT					=	PWM8_IO_PORT;
 		pwm.IO.PIN					=	PWM8_IO_PIN;
@@ -538,7 +538,7 @@ static PWM_DEF _getPWMStruct (enum PWM::ID id)
 		pwm.TIMER.CLOCKFREQ			=	PWM16_TIMER_FREQ;
 		pwm.PWM.DEFAULT_FREQ		=	PWM16_FREQ;
 		pwm.PWM.DEFAULT_DUTYCYCLE	=	PWM16_DUTYCYCLE;
-		break;	
+		break;
 	case PWM::PWM17:
 		pwm.IO.PORT					=	PWM17_IO_PORT;
 		pwm.IO.PIN					=	PWM17_IO_PIN;
@@ -823,4 +823,3 @@ namespace HAL
 		this->state = state;
 	}
 }
-

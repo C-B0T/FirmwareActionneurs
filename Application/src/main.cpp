@@ -22,6 +22,12 @@
 
 #include "Odometry.hpp"
 #include "PositionControlStepper.hpp"
+#include "MotionControl.hpp"
+
+#include "Cylinder.hpp"
+#include "Q7050.hpp"
+
+#include "ADConverter.hpp"
 
 using namespace HAL;
 using namespace Utils;
@@ -111,9 +117,9 @@ static void HardwareInit (void)
                             ENABLE);
 
     // Enable Timer clock
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2 | RCC_APB1Periph_TIM3 | RCC_APB1Periph_TIM4 | RCC_APB1Periph_TIM5 | RCC_APB1Periph_TIM7,
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2 | RCC_APB1Periph_TIM3 | RCC_APB1Periph_TIM4 | RCC_APB1Periph_TIM5 | RCC_APB1Periph_TIM7 | RCC_APB1Periph_TIM12,
                            ENABLE);
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1 | RCC_APB2Periph_TIM8 | RCC_APB2Periph_SPI1,
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1 | RCC_APB2Periph_TIM8 | RCC_APB2Periph_TIM9 | RCC_APB2Periph_SPI1,
                            ENABLE);
 
     // Enable USART Clock
@@ -152,11 +158,6 @@ void TestEvent (void * obj)
  */
 void TASKHANDLER_Test (void * obj)
 {
-	uint32_t i=0;
-	static uint32_t cpt1=0,cpt2=0;
-    static float32_t cpt1f=0.0,cpt2f=0.0;
-    static float32_t pos = 0.0;
-    static float32_t t = 0.0, td = 0.0, tf = 0.0;
     TickType_t xLastWakeTime;
     const TickType_t xFrequency = pdMS_TO_TICKS(100u);
 
@@ -166,20 +167,20 @@ void TASKHANDLER_Test (void * obj)
 //    HAL::GPIO *led3 = HAL::GPIO::GetInstance(HAL::GPIO::GPIO2);
 //    HAL::GPIO *led4 = HAL::GPIO::GetInstance(HAL::GPIO::GPIO3);
 
-//	MotionControl::VelocityControlStepper* vc = MotionControl::VelocityControlStepper::GetInstance();
-//    MotionControl::PositionControl * pc = MotionControl::PositionControl::GetInstance();
-//    MotionControl::ProfileGenerator * pg = MotionControl::ProfileGenerator::GetInstance();
-//    MotionControl::TrajectoryPlanning * tp = MotionControl::TrajectoryPlanning::GetInstance();
+    HAL::GPIO *topz = HAL::GPIO::GetInstance(HAL::GPIO::GPIO72);
 
-	Drv8813* drv1 = Drv8813::GetInstance(Drv8813::DRV8813_4);
-	Drv8813* drv2 = Drv8813::GetInstance(Drv8813::DRV8813_1);
-/*
-	Encoder* e1 = Encoder::GetInstance(Encoder::ENCODER0);
-	Encoder* e2 = Encoder::GetInstance(Encoder::ENCODER1);
-*/
+	Drv8813* drv1 = Drv8813::GetInstance(Drv8813::DRV8813_1);
+	Drv8813* drv2 = Drv8813::GetInstance(Drv8813::DRV8813_4);
+
+    ExtDAC* dac = ExtDAC::GetInstance(ExtDAC::EXTDAC0);
+
 	Location::Odometry* odo = Location::Odometry::GetInstance();
 
+    Cylinder* bari = Cylinder::GetInstance(Cylinder::ID::CYLINDER0);
+    //Cylinder* bari = Cylinder::GetInstance(Cylinder::ID::CYLINDER1);
 
+    Q7050* q1 = Q7050::GetInstance(Q7050::Q7050_1_2);
+    ADConverter* adc = ADConverter::GetInstance(ADConverter::ADC_Channel0);
 
 	// TODO PHASE INIT
     drv1->SetSpeedStep(0);
@@ -191,20 +192,32 @@ void TASKHANDLER_Test (void * obj)
 
     odo->Reset();
 
-    /*drv1->SetDirection(Drv8813State::FORWARD);
-    drv2->SetDirection(Drv8813State::BACKWARD);
-    drv1->SetSpeedStep(50);
-    drv2->SetSpeedStep(50);
-    drv1->PulseRotation(200);
-    drv2->PulseRotation(200);*/
+    // Oneshot cmd
+//    bari->SearchRefPoint();
+//    bari->Goto(1);
+    /*while(!bari->IsPositioningFinished())
+        vTaskDelayUntil(&xLastWakeTime, 200);
+    bari->Goto(-4);
+    while(!bari->IsPositioningFinished())
+        vTaskDelayUntil(&xLastWakeTime, 200);*/
 
-//	vc->SetLinearVelocity(0.2);
-//	drv2->SetSpeedStep(100);
-//    drv2->PulseRotation(152);
+    //bari->Raise();
+    //bari->Lower();
 
-//    pc->SetAngularPosition(3.14);
-//    pc->Test();
-	//pc->SetLinearPosition(0.5);
+    /*drv2->SetDirection(Drv8813State::FORWARD);
+    drv2->SetSpeedStep(400);  // Monter
+//    drv2->SetSpeedStep(100);  // Tourner barillet bas
+    drv2->PulseRotation(10*200);*/
+
+    //q1->SetDutyCycle(Q7050::Q7050_OUT1, 0.1f);  // 50%
+    //q1->SetDutyCycle(Q7050::Q7050_OUT2, 0.1f);  // 50%
+    //q1->SetDutyCycle(Q7050::Q7050_OUT3, 1.0f);
+    //q1->SetDutyCycle(Q7050::Q7050_OUT4, 0.1f);
+    //q2->SetDutyCycle(Q7050::Q7050_OUT1, 0.1f);  //
+    //q1->RisePincer();
+    //q1->LowerPincer();
+    //q1->Open();
+    //q1->Close();
 
     xLastWakeTime = xTaskGetTickCount();
 
@@ -216,101 +229,14 @@ void TASKHANDLER_Test (void * obj)
         //led3->Toggle();
         //led4->Toggle();
 
-        //vc->Compute(xFrequency);
-        //drv1->SetSpeedRPS(2.0);
-    	//drv2->SetSpeedRPS(2.0);
+        // Repeated cmd
 
-        //pc->SetAngularPosition(3.14 - odo->GetAngularPosition());
-        //pc->Test();
+        //printf("%d\r\n", topz->Get());
 
-        /*tp->goLinear(0.5);
+        adc->StartConv();
+        adc->WaitWhileBusy();
 
-        td = getTime();
-
-        while(t < 1.0)
-        {
-            vTaskDelayUntil(&xLastWakeTime, 100);
-            t = getTime() - td;
-            t /= tf;
-
-            // [m/s]
-            //vel1 = 10*pow(t,3) - 15*pow(t,4) + 6*pow(t,5);
-            vel1 = 30*pow(t,2) - 60*pow(t,3) + 30*pow(t,4);
-            vel2 = 30*pow(t,2) - 60*pow(t,3) + 30*pow(t,4);
-
-            //vel1 *= 0.5;
-            vel1 *= 0.2 / 1.875;
-            vel2 *= 0.2 / 1.875;
-
-            // [m/s] to [rot/s]
-            vel1 = vel1 * 1000.0 / 247.607105257;
-            vel2 = vel2 * 1000.0 / 247.607105257;
-
-            drv1->SetSpeedStep((uint32_t)(vel1*200.0));
-            drv2->SetSpeedStep((uint32_t)(vel2*200.0));
-
-            //printf("%.3f\t%.3f\r\n", vel1, vel2);
-        }
-
-        while(1) vTaskDelayUntil(&xLastWakeTime, xFrequency);*/
-
-        //pc->SetLinearPosition(0.5);
-        //pg->StartLinearVelocity(0.5);
-        /*pc->SetAngularPosition(3.14);
-        pg->StartAngularVelocity(3.14);
-        while(1) vTaskDelayUntil(&xLastWakeTime, xFrequency);*/
-
-        /*drv1->SetDirection(Drv8813State::DISABLED);
-        drv2->SetDirection(Drv8813State::FORWARD);
-        drv1->SetSpeedStep(400);
-        drv2->SetSpeedStep(400);
-        drv1->PulseRotation(3*4*250);
-        drv2->PulseRotation(3*4*250);
-        while(1) vTaskDelayUntil(&xLastWakeTime, xFrequency);*/
-
-
-        /* // Profilling
-        drv1->SetDirection(Drv8813State::BACKWARD);
-        drv2->SetDirection(Drv8813State::FORWARD);
-        cpt2 = 0;
-        cpt1 = 0;
-        drv1->SetSpeedStep(800);
-        drv2->SetSpeedStep(800);
-        drv1->PulseRotation(cpt1);
-        drv2->PulseRotation(cpt2);
-
-        td = getTime();
-        t = getTime() - td;
-
-        while(1) {
-            vTaskDelayUntil(&xLastWakeTime, 10);
-            t = getTime() - td;
-            t /= 2.0;
-            if(t <= 1.0)
-            {
-                //pos = 10*pow(t,3) - 15*pow(t,4) + 6*pow(t,5);
-                pos = 0.6*(30*pow(t,2) - 60*pow(t,3) + 30*pow(t,4)) + 0.4;
-
-                cpt1 = (uint32_t)(pos * 4.0 * 200.0);
-                cpt2 = (uint32_t)(pos * 4.0 * 200.0);
-                //drv1->SetSpeedStep(cpt1/4+1);
-                //drv2->SetSpeedStep(cpt2/4+1);
-                drv1->SetSpeedStep(cpt1/2);
-                drv2->SetSpeedStep(cpt2/2);
-                drv1->PulseRotation(cpt1);
-                drv2->PulseRotation(cpt2);
-                printf("%ld\t%ld\r\n", cpt1, cpt2);
-            }
-            else
-            {
-                drv1->SetDirection(Drv8813State::DISABLED);
-                drv2->SetDirection(Drv8813State::DISABLED);
-            }
-        }*/
-
-
-        /*drv1->SetSpeedRPS(cpt1f);
-        drv2->SetSpeedRPS(cpt2f);*/
+        uint16_t val = adc->GetResult();
 
     }
 }
@@ -341,11 +267,12 @@ int main(void)
 	Encoder* e2 = Encoder::GetInstance(Encoder::ENCODER1);
 
 	MotionControl::FBMotionControl * mc = MotionControl::FBMotionControl::GetInstance();
-    Location::Odometry* odo = Location::Odometry::GetInstance();
 
-	//mc->Disable();
-	//MotionControl::PositionControl * pc = MotionControl::PositionControl::GetInstance();
-	//pc->Enable();
+    Cylinder* barilletBas  = Cylinder::GetInstance(Cylinder::ID::CYLINDER0);
+
+    Q7050* q1 = Q7050::GetInstance(Q7050::Q7050_1_2);
+
+    ADConverter* adc = ADConverter::GetInstance(ADConverter::ADC_Channel0);
 
 	// Serial init
     Serial *serial0 = Serial::GetInstance(Serial::SERIAL0);
@@ -355,6 +282,9 @@ int main(void)
 
     // Welcome
     printf("\r\n\r\nSirius[B] Firmware Actionneurs V1.0 (" __DATE__ " - " __TIME__ ")\r\n");
+
+    /*printf("mc->Disable()\r\n");
+    mc->Disable();*/
 
     // Create Test task
     xTaskCreate(&TASKHANDLER_Test,

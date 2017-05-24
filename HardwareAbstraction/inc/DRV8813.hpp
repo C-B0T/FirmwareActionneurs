@@ -102,7 +102,7 @@ typedef struct
 	 *
 	 * HOWTO:
 	 *  - Get a Drv8813 instance with GetInstance() method
-	 *  - 
+	 *  -
 	 */
 	class Drv8813
 	{
@@ -203,7 +203,7 @@ typedef struct
 		 * @brief timer source for tick stepper
 		 */
 		Timer* tim;
-		
+
 		/**
 		 * @private
 		 * @brief Drv8813 GPIO instances

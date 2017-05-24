@@ -21,17 +21,17 @@ using namespace HAL;
 // LED1
 #define GPIO0_PORT				(GPIOB)
 #define GPIO0_PIN				(GPIO_Pin_0)
-#define GPIO0_MODE				(GPIO_Mode_OUT)	
+#define GPIO0_MODE				(GPIO_Mode_OUT)
 
 // LED2
 #define GPIO1_PORT				(GPIOB)
 #define GPIO1_PIN				(GPIO_Pin_7)
-#define GPIO1_MODE				(GPIO_Mode_OUT) 
+#define GPIO1_MODE				(GPIO_Mode_OUT)
 
 // LED3
 #define GPIO2_PORT				(GPIOB)
 #define GPIO2_PIN				(GPIO_Pin_14)
-#define GPIO2_MODE				(GPIO_Mode_OUT) 
+#define GPIO2_MODE				(GPIO_Mode_OUT)
 
 #else
 

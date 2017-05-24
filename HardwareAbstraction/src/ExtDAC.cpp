@@ -91,6 +91,7 @@ namespace HAL
 		{
 			length = 0u;
 			txWord = (EXT_DAC_CMD_SET_OUTPUT_2K5 | 0x000Fu);
+			//txWord = (EXT_DAC_CMD_SET_OUTPUT_HIZ | 0x0000u);
 			txBuffer[length++] = (uint8_t)((txWord >> 8u) & 0x00FFu);
 			txBuffer[length++] = (uint8_t)((txWord) & 0x00FFu);
 		}
@@ -113,7 +114,7 @@ namespace HAL
 		// 2. Send txBuffer - WTM Mode
 		if(rval == NO_ERROR)
 		{
-			rval = this->bus->Transfer(txBuffer, rxBuffer, length);
+            rval = this->bus->Transfer(txBuffer, rxBuffer, length);
 		}
 	}
 
