@@ -17,6 +17,8 @@
 
 #include "../../STM32_Driver/inc/stm32f4xx_it.h"
 
+#include "ADConverter.hpp"
+
 using namespace HAL;
 using namespace Utils;
 
@@ -136,23 +138,33 @@ void TASKHANDLER_Test (void * obj)
     const TickType_t xFrequency = pdMS_TO_TICKS(250);
 
     // Get instances
-    GPIO *led1 = GPIO::GetInstance(GPIO::GPIO0);
-    GPIO *led2 = GPIO::GetInstance(GPIO::GPIO1);
-    GPIO *led3 = GPIO::GetInstance(GPIO::GPIO2);
-    //GPIO *led4 = GPIO::GetInstance(GPIO::GPIO3);
+//    GPIO *led1 = GPIO::GetInstance(GPIO::GPIO0);
+//    GPIO *led2 = GPIO::GetInstance(GPIO::GPIO1);
+//    GPIO *led3 = GPIO::GetInstance(GPIO::GPIO2);
+//    //GPIO *led4 = GPIO::GetInstance(GPIO::GPIO3);
 
     //Timer *Tim7 = Timer::GetInstance (Timer::TIMER7);
     //Tim7->TimerElapsed += TestEvent;
     //Tim7->Start();
 
-    xLastWakeTime = xTaskGetTickCount();
+//    xLastWakeTime = xTaskGetTickCount();
+
+    uint16_t value = 0u;
+    ADConverter* adc = ADConverter::GetInstance(ADConverter::ADC_Channel0);
+
 
     while(1)
     {
+    	adc->StartConv();
+
+    	adc->WaitWhileBusy();
+
+    	value = adc->GetResult();
+
         vTaskDelayUntil(&xLastWakeTime, xFrequency);
-        led1->Toggle();
-        led2->Toggle();
-        led3->Toggle();
+//        led1->Toggle();
+//        led2->Toggle();
+//        led3->Toggle();
         //led4->Toggle();
     }
 }

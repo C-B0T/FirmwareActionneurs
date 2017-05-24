@@ -53,7 +53,7 @@ namespace HAL
 
         };
 
-        ADConverter* GetInstance (ADConverter::Channel channel);
+        static ADConverter* GetInstance (ADConverter::Channel channel);
 
         int32_t StartConv ();
 
