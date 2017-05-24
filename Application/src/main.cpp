@@ -25,7 +25,7 @@
 #include "MotionControl.hpp"
 
 #include "Cylinder.hpp"
-#include "Q7050.hpp"
+//#include "Q7050.hpp"
 
 #include "ADConverter.hpp"
 
@@ -179,7 +179,7 @@ void TASKHANDLER_Test (void * obj)
     Cylinder* bari = Cylinder::GetInstance(Cylinder::ID::CYLINDER0);
     //Cylinder* bari = Cylinder::GetInstance(Cylinder::ID::CYLINDER1);
 
-    Q7050* q1 = Q7050::GetInstance(Q7050::Q7050_1_2);
+    //Q7050* q1 = Q7050::GetInstance(Q7050::Q7050_1_2);
     ADConverter* adc = ADConverter::GetInstance(ADConverter::ADC_Channel0);
 
 	// TODO PHASE INIT
@@ -270,7 +270,7 @@ int main(void)
 
     Cylinder* barilletBas  = Cylinder::GetInstance(Cylinder::ID::CYLINDER0);
 
-    Q7050* q1 = Q7050::GetInstance(Q7050::Q7050_1_2);
+    //Q7050* q1 = Q7050::GetInstance(Q7050::Q7050_1_2);
 
     ADConverter* adc = ADConverter::GetInstance(ADConverter::ADC_Channel0);
 
