@@ -150,7 +150,7 @@ void TASKHANDLER_Test (void * obj)
 //    xLastWakeTime = xTaskGetTickCount();
 
     uint16_t value = 0u;
-    ADConverter* adc = ADConverter::GetInstance(ADConverter::ADC_Channel0);
+    ADConverter* adc = ADConverter::GetInstance(ADConverter::ADC_Channel2);
 
 
     while(1)
