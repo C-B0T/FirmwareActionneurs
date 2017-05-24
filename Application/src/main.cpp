@@ -114,6 +114,10 @@ static void HardwareInit (void)
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
 
+    // A/D Converter Clock
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC | RCC_APB2Periph_ADC1 | RCC_APB2Periph_ADC2 | RCC_APB2Periph_ADC3,
+                           ENABLE);
+
 }
 
 void TestEvent (void * obj)
