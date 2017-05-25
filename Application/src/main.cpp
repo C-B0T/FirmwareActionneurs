@@ -213,6 +213,9 @@ void TASKHANDLER_Test (void * obj)
     drv2->SetSpeedStep(400);  // Monter
 //    drv2->SetSpeedStep(100);  // Tourner barillet bas
     drv2->PulseRotation(10*200);*/
+    /*drv1->SetDirection(Drv8813State::BACKWARD);
+    drv1->SetSpeedStep(400);
+    drv1->PulseRotation(10*200);*/
 
     //q1->SetDutyCycle(Q7050::Q7050_OUT1, 0.1f);  // 50%
     //q1->SetDutyCycle(Q7050::Q7050_OUT2, 0.1f);  // 50%
@@ -241,10 +244,10 @@ void TASKHANDLER_Test (void * obj)
 
         //printf("%d\r\n", topz->Get());
 
-        adc->StartConv();
+        /*adc->StartConv();
         adc->WaitWhileBusy();
 
-        val = adc->GetResult();
+        val = adc->GetResult();*/
 
     }
 }
@@ -292,8 +295,8 @@ int main(void)
     // Welcome
     printf("\r\n\r\nSirius[B] Firmware Actionneurs V1.0 (" __DATE__ " - " __TIME__ ")\r\n");
 
-    /*printf("mc->Disable()\r\n");
-    mc->Disable();*/
+    printf("mc->Disable()\r\n");
+    mc->Disable();
 
     // Create Test task
     xTaskCreate(&TASKHANDLER_Test,
