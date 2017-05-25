@@ -127,6 +127,9 @@ static void HardwareInit (void)
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
 
+    // A/D Converter Clock
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC | RCC_APB2Periph_ADC1 | RCC_APB2Periph_ADC2 | RCC_APB2Periph_ADC3,
+                           ENABLE);
 }
 
 float32_t getTime()
@@ -182,7 +185,7 @@ void TASKHANDLER_Test (void * obj)
 
     //Q7050* q1 = Q7050::GetInstance(Q7050::Q7050_1_2);
     Mandible* man = Mandible::GetInstance(Mandible::ID::MANDIBLE_1);
-    ADConverter* adc = ADConverter::GetInstance(ADConverter::ADC_Channel0);
+    ADConverter* adc = ADConverter::GetInstance(ADConverter::ADC_Channel2);
 
 	// TODO PHASE INIT
     drv1->SetSpeedStep(0);
@@ -224,6 +227,8 @@ void TASKHANDLER_Test (void * obj)
 
     xLastWakeTime = xTaskGetTickCount();
 
+    uint16_t val = 0.0;
+
     while(1)
     {
         vTaskDelayUntil(&xLastWakeTime, xFrequency);
@@ -239,7 +244,7 @@ void TASKHANDLER_Test (void * obj)
         adc->StartConv();
         adc->WaitWhileBusy();
 
-        uint16_t val = adc->GetResult();
+        val = adc->GetResult();
 
     }
 }
@@ -276,7 +281,7 @@ int main(void)
     //Q7050* q1 = Q7050::GetInstance(Q7050::Q7050_1_2);
     Mandible* man = Mandible::GetInstance(Mandible::ID::MANDIBLE_1);
 
-    ADConverter* adc = ADConverter::GetInstance(ADConverter::ADC_Channel0);
+    ADConverter* adc = ADConverter::GetInstance(ADConverter::ADC_Channel2);
 
 	// Serial init
     Serial *serial0 = Serial::GetInstance(Serial::SERIAL0);
