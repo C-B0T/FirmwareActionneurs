@@ -228,7 +228,9 @@ void TASKHANDLER_Test (void * obj)
     //q1->LowerPincer();
     //q1->Open();
     //q1->Close();
-    //man->SetPosition(Mandible::Position::Middle);
+
+    //man->SetPosition(Mandible::Position::Top);
+//    man->SetPosition(Mandible::Position::Bottom);
 
     xLastWakeTime = xTaskGetTickCount();
 

@@ -20,6 +20,8 @@
 #include "TrajectoryPlanning.hpp"
 #include "PositionControlStepper.hpp"
 
+#include "Mandible.hpp"
+
 #include "Diag.hpp"
 
 // FreeRTOS
@@ -90,6 +92,7 @@ typedef void (*FunctionFunc)();
 
         Diag *diag;
 
+        Mandible* man;
 
         void Start();
 

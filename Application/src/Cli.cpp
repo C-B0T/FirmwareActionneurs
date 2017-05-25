@@ -65,6 +65,8 @@ CLI::CLI()
     this->mc = FBMotionControl::GetInstance();
 
     this->diag = Diag::GetInstance();
+
+    this->man = Mandible::GetInstance(Mandible::ID::MANDIBLE_1);
 }
 
 
@@ -180,6 +182,8 @@ void CLI::Compute(float32_t period)
             printf(" - setaccang <a>      \tSet acceleration angular\r\n");
             printf(" - free               \tFreewheel\r\n");
             printf(" - stop <%%>          \tStop %% Brake\r\n");
+            printf(" - rise               \tRise pincer\r\n");
+            printf(" - lower              \tLower pincer\r\n");
             printf(" = \r\n");
             printf(" - GoLin <l>          \tGo Linear (mm)\r\n");
             printf(" - GoAng <a>          \tGo Angular (1/10deg)\r\n");
@@ -420,6 +424,14 @@ void CLI::Compute(float32_t period)
 
             printf("\r\nsetaccang %.3f", a);
             //pg->SetAngularAccMax(a);
+        }
+        else if(strcmp(pch,"rise") == 0)
+        {
+            this->man->SetPosition(Mandible::Position::Top);
+        }
+        else if(strcmp(pch,"lower") == 0)
+        {
+            this->man->SetPosition(Mandible::Position::Bottom);
         }
         else if(strcmp(pch,"Test") == 0)
         {

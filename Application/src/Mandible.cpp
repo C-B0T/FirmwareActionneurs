@@ -15,7 +15,7 @@
 /*----------------------------------------------------------------------------*/
 
 // MANDIBLE_1
-#define MANDIBLE1_HIGH_SIDE_GPIO    (HAL::GPIO::ID::GPIO36)
+#define MANDIBLE1_HIGH_SIDE_GPIO    (HAL::GPIO::ID::GPIO38)
 #define MANDIBLE1_LOW_SIDE_GPIO     (HAL::GPIO::ID::GPIO37)
 #define MANDIBLE1_POWER_PWM         (HAL::PWM::ID::PWM15)
 
@@ -103,44 +103,21 @@ void Mandible::SetPosition(Mandible::Position pos)
 {
     if (pos == Top)
     {
-        if (this->pos != Top)
-        {
-            this->lowSide->Set(HAL::GPIO::State::High);
-            this->power->SetDutyCycle(0.1);
-            vTaskDelay(pdMS_TO_TICKS(1000));
-            this->lowSide->Set(HAL::GPIO::State::Low);
-            this->pos = pos;
-        }
+        this->lowSide->Set(HAL::GPIO::State::High);
+        this->power->SetDutyCycle(0.1);
+        vTaskDelay(pdMS_TO_TICKS(500));
+        this->power->SetDutyCycle(0.0);
+        this->lowSide->Set(HAL::GPIO::State::Low);
+        this->pos = pos;
     }
     else if (pos == Bottom)
     {
-        if (this->pos != Bottom)
-        {
-            this->highSide->Set(HAL::GPIO::State::High);
-            this->power->SetDutyCycle(0.1);
-            vTaskDelay(pdMS_TO_TICKS(1000));
-            this->highSide->Set(HAL::GPIO::State::Low);
-            this->pos = pos;
-        }
-    }
-    else if (pos == Middle)
-    {
-        if (this->pos == Bottom)
-        {
-            this->lowSide->Set(HAL::GPIO::State::High);
-            this->power->SetDutyCycle(0.1);
-            vTaskDelay(pdMS_TO_TICKS(500));
-            this->lowSide->Set(HAL::GPIO::State::Low);
-            this->pos = pos;
-        }
-        else if (this->pos == Top)
-        {
-            this->highSide->Set(HAL::GPIO::State::High);
-            this->power->SetDutyCycle(0.1);
-            vTaskDelay(pdMS_TO_TICKS(500));
-            this->highSide->Set(HAL::GPIO::State::Low);
-            this->pos = pos;
-        }
+        this->highSide->Set(HAL::GPIO::State::High);
+        this->power->SetDutyCycle(0.1);
+        vTaskDelay(pdMS_TO_TICKS(500));
+        this->power->SetDutyCycle(0.0);
+        this->highSide->Set(HAL::GPIO::State::Low);
+        this->pos = pos;
     }
 }
 
@@ -154,6 +131,7 @@ void Mandible::SetPosition(float32_t percent)
     this->highSide->Set(HAL::GPIO::State::High);
     this->power->SetDutyCycle(0.1);
     vTaskDelay(pdMS_TO_TICKS(1000));
+    this->power->SetDutyCycle(0.0);
     this->highSide->Set(HAL::GPIO::State::Low);
 
 }
