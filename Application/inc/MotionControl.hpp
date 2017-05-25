@@ -26,6 +26,8 @@
 #include "ProfileGenerator.hpp"
 #include "TrajectoryPlanning.hpp"
 
+#include "Telemeter.hpp"
+
 // FreeRTOS
 #include "FreeRTOS.h"
 #include "semphr.h"
@@ -170,6 +172,9 @@ namespace MotionControl
         PositionControl    *pc;
         ProfileGenerator   *pg;
         TrajectoryPlanning *tp;
+
+        HAL::Telemeter* telAv;
+        HAL::Telemeter* telAr;
 
 
         bool enable;

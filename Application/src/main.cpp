@@ -30,6 +30,8 @@
 
 #include "ADConverter.hpp"
 
+#include "Telemeter.hpp"
+
 using namespace HAL;
 using namespace Utils;
 
@@ -286,6 +288,9 @@ int main(void)
 
     ADConverter* adc = ADConverter::GetInstance(ADConverter::ADC_Channel2);
 
+    Telemeter* tel1 = Telemeter::GetInstance(Telemeter::TELEMETER_1);
+    Telemeter* tel2 = Telemeter::GetInstance(Telemeter::TELEMETER_2);
+
 	// Serial init
     Serial *serial0 = Serial::GetInstance(Serial::SERIAL0);
 
@@ -295,8 +300,8 @@ int main(void)
     // Welcome
     printf("\r\n\r\nSirius[B] Firmware Actionneurs V1.0 (" __DATE__ " - " __TIME__ ")\r\n");
 
-    printf("mc->Disable()\r\n");
-    mc->Disable();
+    /*printf("mc->Disable()\r\n");
+    mc->Disable();*/
 
     // Create Test task
     xTaskCreate(&TASKHANDLER_Test,

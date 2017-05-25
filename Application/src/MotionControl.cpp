@@ -15,6 +15,7 @@
 #define MC_TASK_PRIORITY            (configMAX_PRIORITIES-3)
 
 #define MC_TASK_PERIOD_MS           (5u)
+#define SENS_TASK_PERIOD_MS           (200u)
 #define TP_TASK_PERIOD_MS           (200u)
 #define PG_TASK_PERIOD_MS           (10u)
 #define PC_TASK_PERIOD_MS           (100u)
@@ -68,6 +69,9 @@ namespace MotionControl
         this->pc = PositionControl::GetInstance(false);
         this->pg = ProfileGenerator::GetInstance(false);
         this->tp = TrajectoryPlanning::GetInstance(false);
+
+        this->telAv = HAL::Telemeter::GetInstance(HAL::Telemeter::TELEMETER_2);
+        this->telAr = HAL::Telemeter::GetInstance(HAL::Telemeter::TELEMETER_1);
 
         // Create task
         xTaskCreate((TaskFunction_t)(&FBMotionControl::taskHandler),
@@ -141,6 +145,14 @@ namespace MotionControl
         // If MotionControl is disabled then don't schedule submodules
         if(this->enable == false)
             return;
+
+        if((localTime % SENS_TASK_PERIOD_MS) == 0)
+        {
+            if(this->telAv->Detect())
+            {
+                this->Stop();
+            }
+        }
 
         // #1 Schedule TrajectoryPlanning
         if((localTime % TP_TASK_PERIOD_MS) == 0)
