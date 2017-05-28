@@ -257,6 +257,40 @@ void TASKHANDLER_Test (void * obj)
 }
 
 
+// After cup: One task
+void TASKHANDLER_Cylinder (void * obj)
+{
+    TickType_t xLastWakeTime;
+    const TickType_t xFrequency = pdMS_TO_TICKS(100u);
+
+    // After cup: Adjust ratio of gears
+    const float32_t ratio1 = 3.89;
+    const float32_t ratio2 = 3.89;
+
+    HAL::GPIO *led1 = HAL::GPIO::GetInstance(HAL::GPIO::GPIO0);
+
+    Drv8813* bari1 = Drv8813::GetInstance(Drv8813::DRV8813_1);
+	Drv8813* bari2 = Drv8813::GetInstance(Drv8813::DRV8813_2);
+
+    xLastWakeTime = xTaskGetTickCount();
+
+    while(1)
+    {
+        vTaskDelay(500);
+
+        bari1->SetDirection(Drv8813State::FORWARD);
+        bari1->SetSpeedStep(100);
+        bari1->PulseRotation(ratio1*200);
+        while(bari1->IsMoving())
+        {
+            led1->Toggle();
+            vTaskDelay(200);
+        }
+        bari1->SetDirection(Drv8813State::DISABLED);
+    }
+}
+
+
 /**
  * @brief Main
  */
@@ -271,6 +305,7 @@ int main(void)
     HAL::GPIO *led4 = HAL::GPIO::GetInstance(HAL::GPIO::GPIO3);
     led1->Set(GPIO::State::Low);
 
+/*
     //Set External DAC
     ExtDAC* dac = ExtDAC::GetInstance(ExtDAC::EXTDAC0);
     dac->SetOutputValue(ExtDAC::ExtDAC_Channel0,20u);
@@ -301,13 +336,26 @@ int main(void)
 
     // Welcome
     printf("\r\n\r\nSirius[B] Firmware Actionneurs V1.0 (" __DATE__ " - " __TIME__ ")\r\n");
+*/
 
     /*printf("mc->Disable()\r\n");
     mc->Disable();*/
 
+    // After cup: Drv1 is higher on the board
+    Drv8813* drv1 = Drv8813::GetInstance(Drv8813::DRV8813_1);
+	Drv8813* drv2 = Drv8813::GetInstance(Drv8813::DRV8813_2);
+
     // Create Test task
-    xTaskCreate(&TASKHANDLER_Test,
+    /*xTaskCreate(&TASKHANDLER_Test,
                 "Test Task",
+                256,
+                NULL,
+                3,
+                NULL);*/
+
+    // After cup: Infinity cylinder loop
+    xTaskCreate(&TASKHANDLER_Cylinder,
+                "Test Cylinder",
                 256,
                 NULL,
                 3,
