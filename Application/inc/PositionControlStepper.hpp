@@ -106,6 +106,10 @@ namespace MotionControl
             currentAngularPosition = odometry->GetAngularPosition();
             time = getTime();
 
+            // Reset PID
+            this->pid_angular.Reset();
+            this->pid_linear.Reset();
+
             // Set angular position order
             this->angularPosition = position;
 
@@ -132,6 +136,10 @@ namespace MotionControl
             // Get current and time
             currentLinearPosition = odometry->GetLinearPosition();
             time = getTime();
+
+            // Reset PID
+            this->pid_angular.Reset();
+            this->pid_linear.Reset();
 
             // Set linear position order
             this->linearPosition = position;

@@ -309,10 +309,10 @@ namespace Location
         this->robot.AngularVelocity = (dO / ADW_TICK);
         this->robot.LinearVelocity  = dL;
 
-        /*while(this->robot.O > _2_PI_)
+        while(this->robot.O > _2_PI_)
             this->robot.O -= _2_PI_;
         while(this->robot.O < -_2_PI_)
-            this->robot.O += _2_PI_;*/
+            this->robot.O += _2_PI_;
 
         dX = cos(this->robot.O) * dL;
         dY = sin(this->robot.O) * dL;

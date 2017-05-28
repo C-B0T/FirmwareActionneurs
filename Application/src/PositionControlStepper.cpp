@@ -274,8 +274,8 @@ namespace MotionControl
 
         if(!this->isPositioningFinished())
         {
-            printf("%.7f\t%.7f\t", this->linearPositionProfiled, this->angularPositionProfiled);
-            printf("%.7f\t%.7f\t", currentLinearPosition, currentAngularPosition);
+            //printf("%.7f\t%.7f\t", this->linearPositionProfiled, this->angularPositionProfiled);
+            //printf("%.7f\t%.7f\t", currentLinearPosition, currentAngularPosition);
         }
 
         this->angularPositionLast = this->angularPositionProfiled;
@@ -301,8 +301,8 @@ namespace MotionControl
 
             if(!this->isPositioningFinished())
             {
-                printf("%.7f\t%.7f\t", this->linearVelocity, this->angularVelocity);
-                printf("\r\n");
+                //printf("%.7f\t%.7f\t", this->linearVelocity, this->angularVelocity);
+                //printf("\r\n");
             }
 
             // Angular&Linear (radian&meter) to Left&Right (meter&meter)
@@ -325,6 +325,12 @@ namespace MotionControl
 
             LeftVelocity  = this->abs(LeftVelocity);
             RightVelocity = this->abs(RightVelocity);
+
+            // Check maximum
+            if(LeftVelocity > 400)  // RPS
+                LeftVelocity = 400;
+            if(RightVelocity > 400)  // RPS
+                RightVelocity = 400;
 
             if(!this->isPositioningFinished())
             {
